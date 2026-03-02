@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ModeToggle } from "./ModeToggle";
 
 export function Navbar() {
   const [open, setOpen] = React.useState(false);
@@ -80,6 +81,7 @@ export function Navbar() {
 
           {!isAuthenticated ? (
             <div className="hidden sm:flex gap-2">
+              <ModeToggle/>
               <Link href="/login">
                 <Button variant="outline">Login</Button>
               </Link>
