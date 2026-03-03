@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { loginUser } from "@/services/auth";
+import { useRouter } from "next/navigation";
 
 // Form Validation Schema
 const formSchema = z.object({
@@ -30,6 +31,7 @@ const formSchema = z.object({
 });
 
 export default function LoginForm() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,6 +46,7 @@ export default function LoginForm() {
       const res = await loginUser(values);
       if (res.success) {
         toast.success("Login successful! Redirecting...");
+        router.push("/");
       }
     } catch (error: any) {
       toast.error(error || "Login failed")

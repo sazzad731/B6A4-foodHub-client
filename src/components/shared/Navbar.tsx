@@ -1,180 +1,271 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
-import { ShoppingCart, Menu, User } from "lucide-react";
+import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
 
-// Shadcn UI Components
+import { cn } from "@/lib/utils";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ModeToggle } from "./ModeToggle";
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
-export function Navbar() {
-  const [open, setOpen] = React.useState(false);
 
-  // --- STATIC PLACEHOLDERS FOR UI PREVIEW ---
-  // Change these values to see different UI states (e.g., set to false to see Login/Signup)
-  const isAuthenticated = false;
-  const itemCount = 5;
-  const user = {
-    name: "John Doe",
-    role: "admin", // 'customer' | 'provider' | 'admin'
-    avatar: "👤",
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getUser, userLogOut } from "@/services/auth";
+
+
+
+interface MenuItem {
+  title: string;
+  url: string;
+  description?: string;
+  icon?: React.ReactNode;
+  items?: MenuItem[];
+}
+
+interface NavbarProps {
+  className?: string;
+  logo?: {
+    src?: string;
+    alt?: string;
+    title: string;
+    className?: string;
+  };
+  menu?: MenuItem[];
+  auth?: {
+    login: {
+      title: string;
+      url: string;
+    };
+    signup: {
+      title: string;
+      url: string;
+    };
+    logout: {
+      title: string;
+    };
+  };
+}
+
+const Navbar = ({
+  logo = {
+    title: "FoodHub",
+  },
+  menu = [
+    { title: "Home", url: "#" },
+    {
+      title: "Pricing",
+      url: "#",
+    },
+    {
+      title: "Blog",
+      url: "#",
+    },
+  ],
+  auth = {
+    login: { title: "Login", url: "/login" },
+    signup: { title: "Sign up", url: "/signup" },
+    logout: { title: "Logout" },
+  },
+  className,
+}: NavbarProps) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const userdata = await getUser();
+      setUser(userdata);
+    }
+    getCurrentUser();
+  }, [loading]);
+
+  const handleLogOut = () => {
+    userLogOut();
+    setLoading(!loading);
   };
 
-  const navLinks = [
-    { label: "Home", href: "/" },
-    { label: "Meals", href: "/meals" },
-    { label: "Providers", href: "/providers" },
-  ];
-
-  const authenticatedLinks = [
-    { label: "Dashboard", href: "/dashboard" },
-    { label: "Profile", href: "/profile" },
-    { label: "Orders", href: "/orders" },
-  ];
-
   return (
-    <nav className="sticky top-0 z-40 border-b border-gray-200 bg-white">
-      <div className="mx-auto flex h-16 container items-center justify-between px-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-          <span className="text-2xl">🍽️</span>
-          <span className="hidden sm:inline text-gray-900">FoodHub</span>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              {link.label}
+    <section className={cn("py-4", className)}>
+      <div className="container mx-auto px-4">
+        {/* Desktop Menu */}
+        <nav className="hidden items-center justify-between lg:flex">
+          <div className="flex items-center gap-6">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2">
+              <span className="text-lg font-semibold tracking-tighter">
+                {logo.title}
+              </span>
             </Link>
-          ))}
-        </div>
-
-        {/* Right Section */}
-        <div className="flex items-center gap-2 sm:gap-4">
-          {/* Cart Icon (Visible if Customer) */}
-          {isAuthenticated && (
-            <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="h-5 w-5" />
-                {itemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-red-600 text-white text-xs flex items-center justify-center font-bold">
-                    {itemCount > 9 ? "9+" : itemCount}
-                  </span>
-                )}
+            <div className="flex items-center">
+              <NavigationMenu>
+                <NavigationMenuList>
+                  {menu.map((item) => renderMenuItem(item))}
+                </NavigationMenuList>
+              </NavigationMenu>
+            </div>
+          </div>
+          {user ? (
+            <div className="flex gap-2">
+              <Button asChild size="sm" onClick={handleLogOut}>
+                <button>{auth.logout.title}</button>
               </Button>
-            </Link>
-          )}
-
-          {!isAuthenticated ? (
-            <div className="hidden sm:flex gap-2">
-              <ModeToggle/>
-              <Link href="/login">
-                <Button variant="outline">Login</Button>
-              </Link>
-              <Link href="/register">
-                <Button className="bg-red-600 hover:bg-red-700">Sign Up</Button>
-              </Link>
             </div>
           ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <span className="text-xl">{user.avatar}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <div className="px-2 py-1.5 text-sm">
-                  <p className="font-semibold">{user.name}</p>
-                  <p className="text-xs bg-indigo-100 text-indigo-800 rounded px-1.5 py-0.5 mt-1 inline-block capitalize">
-                    {user.role}
-                  </p>
-                </div>
-                <DropdownMenuSeparator />
-                {authenticatedLinks.map((link) => (
-                  <DropdownMenuItem key={link.href} asChild>
-                    <Link href={link.href} className="w-full cursor-pointer">
-                      {link.label}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-600 cursor-pointer">
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-
-          {/* Mobile Menu Trigger */}
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link href={auth.login.url}>{auth.login.title}</Link>
               </Button>
-            </SheetTrigger>
-            <SheetContent side="right">
-              <div className="flex flex-col gap-4 mt-6">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className="text-sm font-medium text-gray-700 hover:text-red-600"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+              <Button asChild size="sm">
+                <Link href={auth.signup.url}>{auth.signup.title}</Link>
+              </Button>
+            </div>
+          )}
+        </nav>
 
-                {isAuthenticated ? (
-                  <>
-                    <div className="h-px bg-gray-100 my-2" />
-                    {authenticatedLinks.map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        onClick={() => setOpen(false)}
-                        className="text-sm font-medium text-gray-700"
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                    <button className="text-sm font-medium text-red-600 text-left">
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <div className="flex flex-col gap-2 pt-2 border-t">
-                    <Link href="/login" onClick={() => setOpen(false)}>
-                      <Button variant="outline" className="w-full">
-                        Login
+        {/* Mobile Menu */}
+        <div className="block lg:hidden">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2">
+              <span className="text-lg font-semibold tracking-tighter">
+                {logo.title}
+              </span>
+            </Link>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Menu className="size-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="overflow-y-auto">
+                <SheetHeader>
+                  <SheetTitle>
+                    <Link href="/" className="flex items-center gap-2"></Link>
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-6 p-4">
+                  <Accordion
+                    type="single"
+                    collapsible
+                    className="flex w-full flex-col gap-4"
+                  >
+                    {menu.map((item) => renderMobileMenuItem(item))}
+                  </Accordion>
+
+                  {user ? (
+                    <div className="flex flex-col gap-3">
+                      <Button asChild size="sm" onClick={handleLogOut}>
+                        <button>{auth.logout.title}</button>
                       </Button>
-                    </Link>
-                    <Link href="/register" onClick={() => setOpen(false)}>
-                      <Button className="w-full bg-red-600 hover:bg-red-700 text-white">
-                        Sign Up
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={auth.login.url}>{auth.login.title}</Link>
                       </Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
+                      <Button asChild size="sm">
+                        <Link href={auth.signup.url}>{auth.signup.title}</Link>
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
-    </nav>
+    </section>
   );
-}
+};
+
+const renderMenuItem = (item: MenuItem) => {
+  if (item.items) {
+    return (
+      <NavigationMenuItem key={item.title}>
+        <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
+        <NavigationMenuContent className="bg-popover text-popover-foreground">
+          {item.items.map((subItem) => (
+            <NavigationMenuLink asChild key={subItem.title} className="w-80">
+              <SubMenuLink item={subItem} />
+            </NavigationMenuLink>
+          ))}
+        </NavigationMenuContent>
+      </NavigationMenuItem>
+    );
+  }
+
+  return (
+    <NavigationMenuItem key={item.title}>
+      <NavigationMenuLink
+        href={item.url}
+        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
+      >
+        {item.title}
+      </NavigationMenuLink>
+    </NavigationMenuItem>
+  );
+};
+
+const renderMobileMenuItem = (item: MenuItem) => {
+  if (item.items) {
+    return (
+      <AccordionItem key={item.title} value={item.title} className="border-b-0">
+        <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
+          {item.title}
+        </AccordionTrigger>
+        <AccordionContent className="mt-2">
+          {item.items.map((subItem) => (
+            <SubMenuLink key={subItem.title} item={subItem} />
+          ))}
+        </AccordionContent>
+      </AccordionItem>
+    );
+  }
+
+  return (
+    <a key={item.title} href={item.url} className="text-md font-semibold">
+      {item.title}
+    </a>
+  );
+};
+
+const SubMenuLink = ({ item }: { item: MenuItem }) => {
+  return (
+    <a
+      className="flex min-w-80 flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-muted hover:text-accent-foreground"
+      href={item.url}
+    >
+      <div className="text-foreground">{item.icon}</div>
+      <div>
+        <div className="text-sm font-semibold">{item.title}</div>
+        {item.description && (
+          <p className="text-sm leading-snug text-muted-foreground">
+            {item.description}
+          </p>
+        )}
+      </div>
+    </a>
+  );
+};
+
+export { Navbar };

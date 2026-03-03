@@ -4,7 +4,7 @@ import React from 'react';
 const CommonLayout = ({children}: {children: React.ReactNode}) => {
   return (
     <>
-      <Navbar />
+      <Navbar/>
       <main className="container mx-auto px-4">{children}</main>
     </>
   );
