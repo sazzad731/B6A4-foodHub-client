@@ -31,6 +31,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getUser, userLogOut } from "@/services/auth";
+import { ModeToggle } from "./ModeToggle";
 
 
 
@@ -126,12 +127,14 @@ const Navbar = ({
           </div>
           {user ? (
             <div className="flex gap-2">
+              <ModeToggle />
               <Button asChild size="sm" onClick={handleLogOut}>
                 <button>{auth.logout.title}</button>
               </Button>
             </div>
           ) : (
             <div className="flex gap-2">
+              <ModeToggle />
               <Button asChild variant="outline" size="sm">
                 <Link href={auth.login.url}>{auth.login.title}</Link>
               </Button>
@@ -151,46 +154,53 @@ const Navbar = ({
                 {logo.title}
               </span>
             </Link>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Menu className="size-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>
-                    <Link href="/" className="flex items-center gap-2"></Link>
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col gap-6 p-4">
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className="flex w-full flex-col gap-4"
-                  >
-                    {menu.map((item) => renderMobileMenuItem(item))}
-                  </Accordion>
+            <div>
+              <span className="mr-2">
+                <ModeToggle />
+              </span>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Menu className="size-4" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>
+                      <Link href="/" className="flex items-center gap-2"></Link>
+                    </SheetTitle>
+                  </SheetHeader>
+                  <div className="flex flex-col gap-6 p-4">
+                    <Accordion
+                      type="single"
+                      collapsible
+                      className="flex w-full flex-col gap-4"
+                    >
+                      {menu.map((item) => renderMobileMenuItem(item))}
+                    </Accordion>
 
-                  {user ? (
-                    <div className="flex flex-col gap-3">
-                      <Button asChild size="sm" onClick={handleLogOut}>
-                        <button>{auth.logout.title}</button>
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-3">
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={auth.login.url}>{auth.login.title}</Link>
-                      </Button>
-                      <Button asChild size="sm">
-                        <Link href={auth.signup.url}>{auth.signup.title}</Link>
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
+                    {user ? (
+                      <div className="flex flex-col gap-3">
+                        <Button asChild size="sm" onClick={handleLogOut}>
+                          <button>{auth.logout.title}</button>
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-3">
+                        <Button asChild variant="outline" size="sm">
+                          <Link href={auth.login.url}>{auth.login.title}</Link>
+                        </Button>
+                        <Button asChild size="sm">
+                          <Link href={auth.signup.url}>
+                            {auth.signup.title}
+                          </Link>
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
       </div>
