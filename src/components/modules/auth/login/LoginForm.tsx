@@ -46,7 +46,7 @@ export default function LoginForm() {
       const res = await loginUser(values);
       if (res.success) {
         toast.success("Login successful! Redirecting...");
-        router.push("/");
+        // router.push("/");
       }
     } catch (error: any) {
       toast.error(error || "Login failed")

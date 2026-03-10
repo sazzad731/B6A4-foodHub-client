@@ -71,17 +71,6 @@ const Navbar = ({
   logo = {
     title: "FoodHub",
   },
-  menu = [
-    { title: "Home", url: "#" },
-    {
-      title: "Pricing",
-      url: "#",
-    },
-    {
-      title: "Blog",
-      url: "#",
-    },
-  ],
   auth = {
     login: { title: "Login", url: "/login" },
     signup: { title: "Sign up", url: "/signup" },
@@ -104,6 +93,25 @@ const Navbar = ({
     userLogOut();
     setLoading(!loading);
   };
+
+  const menu = [
+    { title: "Home", url: "/" },
+    {
+      title: "Pricing",
+      url: "#",
+    },
+    {
+      title: "Blog",
+      url: "#",
+    }
+  ]
+
+  if(user){
+    menu.push({
+      title: "Dashboard",
+      url: "/dashboard"
+    })
+  }
 
   return (
     <section className={cn("py-4", className)}>

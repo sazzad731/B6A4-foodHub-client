@@ -1,3 +1,4 @@
+import { ROLES } from '@/constants/roles';
 import { getUser } from '@/services/auth';
 import React from 'react';
 
@@ -5,9 +6,9 @@ const DashboardLayout = async({customer, provider, admin}: {customer: React.Reac
   const user = await getUser();
   return (
     <>
-      {user?.role === 'CUSTOMER' && customer}
-      {user?.role === 'PROVIDER' && provider}
-      {user?.role === 'ADMIN' && admin}
+      {user?.role === ROLES.customer && customer}
+      {user?.role === ROLES.provider && provider}
+      {user?.role === ROLES.admin && admin}
     </>
   );
 };
