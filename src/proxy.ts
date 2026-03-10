@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "./services/auth";
-import { ROLES } from "./constants/roles";
 
 export async function proxy(request: NextRequest){
     const user = await getUser();
