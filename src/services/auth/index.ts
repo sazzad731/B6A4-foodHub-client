@@ -54,11 +54,17 @@ export const loginUser = async (userData: FieldValues) => {
 
 export const getUser = async () => {
   const storeCookie = await cookies();
+  const currentTime = Date.now() / 1000;
   const token = storeCookie.get("token")?.value
   let decoded = null;
   if (token) {
-    decoded = await jwtDecode(token)
-    return decoded
+    decoded = await jwtDecode(token);
+    if (decoded.exp < currentTime) {
+      await userLogOut();
+      return null
+    }
+    console.log(decoded)
+    return decoded;
   } else {
     return null
   }
