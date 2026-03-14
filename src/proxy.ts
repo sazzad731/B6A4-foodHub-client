@@ -1,11 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUser } from "./services/auth";
+import { getUser, userLogOut } from "./services/auth";
+
+
+const ALLOWED_ROLE = ["CUSTOMER", "PROVIDER", "ADMIN"];
+
+
 
 export async function proxy(request: NextRequest){
+    const { pathname, origin } = request.nextUrl;
+    
     const user = await getUser();
 
-    if(!user){
-        return NextResponse.redirect(new URL("/login", request.url))
+
+    if (!user) {
+        return NextResponse.redirect(new URL(`/login?redirect=${pathname}`, origin));
+    }
+
+
+    if (!ALLOWED_ROLE.includes(user.role)) {
+        userLogOut();
+        return NextResponse.redirect(new URL(`/login?redirect=${pathname}`, origin));
     }
 
     return NextResponse.next();

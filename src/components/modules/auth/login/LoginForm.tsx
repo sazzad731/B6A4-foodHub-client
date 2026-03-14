@@ -46,7 +46,7 @@ export default function LoginForm() {
       const res = await loginUser(values);
       if (res.success) {
         toast.success("Login successful! Redirecting...");
-        // router.push("/");
+        router.push("/dashboard");
       }
     } catch (error: any) {
       toast.error(error || "Login failed")
@@ -147,7 +147,7 @@ export default function LoginForm() {
                 href="/register"
                 className="text-red-600 font-semibold hover:underline"
               >
-                Sign up
+                Register
               </Link>
             </p>
           </div>

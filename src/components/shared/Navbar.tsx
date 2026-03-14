@@ -32,6 +32,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getUser, userLogOut } from "@/services/auth";
 import { ModeToggle } from "./ModeToggle";
+import { toast } from "sonner";
 
 
 
@@ -73,7 +74,7 @@ const Navbar = ({
   },
   auth = {
     login: { title: "Login", url: "/login" },
-    signup: { title: "Sign up", url: "/signup" },
+    signup: { title: "Register", url: "/register" },
     logout: { title: "Logout" },
   },
   className,
@@ -91,6 +92,7 @@ const Navbar = ({
 
   const handleLogOut = () => {
     userLogOut();
+    toast.success("Log out success")
     setLoading(!loading);
   };
 
