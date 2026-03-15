@@ -3,7 +3,7 @@ import * as React from "react"
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
+  SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -12,20 +12,33 @@ import {
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 import Logo from "@/components/shared/Logo"
+import { Route } from "@/types/routes.types";
+import { adminRoute } from "@/routes/admin.routes";
+import { providerRoute } from "@/routes/provider.routes";
+import { customerRoute } from "@/routes/customer.routes";
+import { ROLES } from "@/constants/roles";
 
-// This is sample data.
-const navMain = [
-  {
-    title: "Profile",
-    url: "/dashboard"
+
+export function DashboardSidebar({user, ...props }: {user: {role: string} & React.ComponentProps<typeof Sidebar>}) {
+  let routes: Route[] = [];
+
+  switch (user.role) {
+    case ROLES.admin:
+      routes = adminRoute;
+      break;
+    case ROLES.provider:
+      routes = providerRoute;
+      break;
+    case ROLES.customer:
+      routes = customerRoute;
+      break;
+    default:
+      routes = [];
+      break;
   }
-];
-
-
-export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="mb-5">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
@@ -35,19 +48,17 @@ export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sideb
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
+        <SidebarGroupContent>
           <SidebarMenu>
-            {navMain.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild className="bg-secondary hover:bg-base-300">
-                  <Link href={item.url} className="font-medium">
-                    {item.title}
-                  </Link>
+            {routes.map((item) => (
+              <SidebarMenuItem key={item.title} className="mb-3">
+                <SidebarMenuButton className={`bg-secondary hover:bg-base-300 cursor-pointer font-medium`}>
+                  <Link href={item.url}>{item.title}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
-        </SidebarGroup>
+        </SidebarGroupContent>
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
