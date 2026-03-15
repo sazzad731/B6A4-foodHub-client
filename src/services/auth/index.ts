@@ -63,7 +63,6 @@ export const getUser = async () => {
       await userLogOut();
       return null
     }
-    console.log(decoded)
     return decoded;
   } else {
     return null

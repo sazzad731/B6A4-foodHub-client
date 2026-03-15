@@ -33,6 +33,7 @@ import { useEffect, useState } from "react";
 import { getUser, userLogOut } from "@/services/auth";
 import { ModeToggle } from "./ModeToggle";
 import { toast } from "sonner";
+import Logo from "./Logo";
 
 
 
@@ -69,9 +70,6 @@ interface NavbarProps {
 }
 
 const Navbar = ({
-  logo = {
-    title: "FoodHub",
-  },
   auth = {
     login: { title: "Login", url: "/login" },
     signup: { title: "Register", url: "/register" },
@@ -122,11 +120,7 @@ const Navbar = ({
         <nav className="hidden items-center justify-between lg:flex">
           <div className="flex items-center gap-6">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-lg font-semibold tracking-tighter">
-                {logo.title}
-              </span>
-            </Link>
+            <Logo/>
             <div className="flex items-center">
               <NavigationMenu>
                 <NavigationMenuList>
@@ -159,11 +153,7 @@ const Navbar = ({
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-lg font-semibold tracking-tighter">
-                {logo.title}
-              </span>
-            </Link>
+            <Logo/>
             <div>
               <span className="mr-2">
                 <ModeToggle />
