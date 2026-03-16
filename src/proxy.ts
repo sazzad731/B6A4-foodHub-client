@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser, userLogOut } from "./services/auth";
+import { ROLES } from "./constants/roles";
 
 
-const ALLOWED_ROLE = ["CUSTOMER", "PROVIDER", "ADMIN"];
+const ALLOWED_ROLE = [ROLES.customer, ROLES.provider, ROLES.admin];
 
 
 

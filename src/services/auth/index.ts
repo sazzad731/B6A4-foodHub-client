@@ -60,7 +60,8 @@ export const getUser = async () => {
   if (token) {
     decoded = await jwtDecode(token);
     if (decoded.exp < currentTime) {
-      await userLogOut();
+      storeCookie.delete("token");
+      decoded = null;
       return null
     }
     return decoded;
