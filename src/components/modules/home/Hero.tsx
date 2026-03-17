@@ -3,6 +3,7 @@ import { Search, Zap, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import heroFood from "../../../../public/images/hero-food.jpg"
 
 export function Hero() {
   return (
@@ -64,8 +65,9 @@ export function Hero() {
             <div className="absolute inset-0 bg-linear-to-br from-red-400 to-orange-400 rounded-2xl opacity-10 z-0" />
             <div className="w-full h-full bg-gray-200 rounded-2xl flex items-center justify-center overflow-hidden border border-gray-100">
               <Image
-                src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80"
+                src={heroFood}
                 alt="Delicious food"
+                priority
                 className="w-full h-full object-cover rounded-2xl"
                 width={500}
                 height={500}

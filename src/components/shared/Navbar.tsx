@@ -82,9 +82,13 @@ const Navbar = ({
 
   useEffect(() => {
     const getCurrentUser = async () => {
-      const userdata = await getUser();
-      setUser(userdata);
-    }
+      try {
+        const userdata = await getUser();
+        setUser(userdata);
+      } catch (error) {
+        console.error("Failed to get user:", error);
+      }
+    };
     getCurrentUser();
   }, [loading]);
 
