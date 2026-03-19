@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 
 import {
@@ -17,9 +19,11 @@ import { adminRoute } from "@/routes/admin.routes";
 import { providerRoute } from "@/routes/provider.routes";
 import { customerRoute } from "@/routes/customer.routes";
 import { ROLES } from "@/constants/roles";
+import { usePathname } from "next/navigation"
 
 
 export function DashboardSidebar({user, ...props }: {user: {role: string} & React.ComponentProps<typeof Sidebar>}) {
+  const pathName = usePathname();
   let routes: Route[] = [];
 
   switch (user.role) {
@@ -51,8 +55,8 @@ export function DashboardSidebar({user, ...props }: {user: {role: string} & Reac
         <SidebarGroupContent>
           <SidebarMenu>
             {routes.map((item) => (
-              <SidebarMenuItem key={item.title} className="mb-3">
-                <SidebarMenuButton className={`bg-secondary hover:bg-base-300 cursor-pointer font-medium`}>
+              <SidebarMenuItem key={item.title} className="mb-3 mx-3">
+                <SidebarMenuButton className={`${pathName === item.url ? "bg-base-300" : "bg-secondary"} hover:bg-base-300 cursor-pointer font-medium`}>
                   <Link href={item.url}>{item.title}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

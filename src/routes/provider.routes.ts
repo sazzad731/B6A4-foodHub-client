@@ -7,7 +7,7 @@ export const providerRoute: Route[] = [
     url: "/dashboard/profile",
   },
   {
-    title: "Add Meals",
-    url: "add-meals",
+    title: "Add Menu",
+    url: "/dashboard/add-menu",
   },
 ];
