@@ -124,7 +124,7 @@ const Navbar = ({
         <nav className="hidden items-center justify-between lg:flex">
           <div className="flex items-center gap-6">
             {/* Logo */}
-            <Logo/>
+            <Logo />
             <div className="flex items-center">
               <NavigationMenu>
                 <NavigationMenuList>
@@ -157,7 +157,7 @@ const Navbar = ({
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Logo/>
+            <Logo />
             <div>
               <span className="mr-2">
                 <ModeToggle />
