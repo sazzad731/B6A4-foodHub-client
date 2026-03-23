@@ -38,7 +38,6 @@ export default function AddMenuForm() {
     },
     onSubmit: async({ value }) => {
       console.log(value)
-      console.log("Clicked")
     }
   });
   return (
@@ -122,7 +121,6 @@ export default function AddMenuForm() {
                     <Input
                       id={field.name}
                       name={field.name}
-                      // value={field.state.value}
                       onChange={(e) =>
                         field.handleChange(Number(e.target.value))
                       }

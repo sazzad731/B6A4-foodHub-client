@@ -1,3 +1,10 @@
 {
-  "prisma-smart-formatter.prisma.defaultFormatter": "Prisma.prisma"
+  "prisma-smart-formatter.prisma.defaultFormatter": "Prisma.prisma",
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#474F7A",
+    "titleBar.border": "#474F7A",
+    "titleBar.activeForeground": "#FFD0EC",
+    "titleBar.inactiveBackground": "#63698e",
+    "titleBar.inactiveForeground": "#ffd7ef"
+  }
 }

@@ -1,7 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap');
+
 @import "tailwindcss";
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "DM Sans", "system-ui", "sans-serif";
+}
 
 @theme inline {
   --color-background: var(--background);
