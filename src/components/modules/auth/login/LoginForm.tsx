@@ -42,10 +42,11 @@ export default function LoginForm() {
 
   
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const toastId = toast.loading("Authenticating ...")
     try {
       const res = await loginUser(values);
       if (res.success) {
-        toast.success("Login successful! Redirecting...");
+        toast.success("Login successful! Redirecting...", {id: toastId});
         router.push("/dashboard");
       }
     } catch (error: any) {

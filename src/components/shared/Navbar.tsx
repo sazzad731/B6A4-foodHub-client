@@ -2,7 +2,6 @@
 
 import { Menu } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 
 import {
   Accordion,
@@ -34,6 +33,8 @@ import { getUser, userLogOut } from "@/services/auth";
 import { ModeToggle } from "./ModeToggle";
 import { toast } from "sonner";
 import Logo from "./Logo";
+import NavButton from "./NavButton";
+import ShoppingCartBtn from "./ShoppingCartBtn";
 
 
 
@@ -79,7 +80,9 @@ const Navbar = ({
 }: NavbarProps) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
+  // load user data
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
@@ -91,6 +94,14 @@ const Navbar = ({
     };
     getCurrentUser();
   }, [loading]);
+
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+
 
   const handleLogOut = () => {
     userLogOut();
@@ -118,39 +129,25 @@ const Navbar = ({
   }
 
   return (
-    <section className={cn("py-4", className)}>
+    <section
+      className={`fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 ${scrolled ? "shadow-lg" : ""} py-4 bg-fh-cream/88 backdrop-blur-lg border-b border-b-fh-green-deep/7`}
+    >
       <div className="container mx-auto px-4">
         {/* Desktop Menu */}
         <nav className="hidden items-center justify-between lg:flex">
-          <div className="flex items-center gap-6">
-            {/* Logo */}
-            <Logo />
-            <div className="flex items-center">
-              <NavigationMenu>
-                <NavigationMenuList>
-                  {menu.map((item) => renderMenuItem(item))}
-                </NavigationMenuList>
-              </NavigationMenu>
-            </div>
+          {/* Logo */}
+          <Logo />
+          <div className="flex items-center justify-center">
+            <NavigationMenu>
+              <NavigationMenuList>
+                {menu.map((item) => renderMenuItem(item))}
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
-          {user ? (
-            <div className="flex gap-2">
-              <ModeToggle />
-              <Button asChild size="sm" onClick={handleLogOut}>
-                <button>{auth.logout.title}</button>
-              </Button>
-            </div>
-          ) : (
-            <div className="flex gap-2">
-              <ModeToggle />
-              <Button asChild variant="outline" size="sm">
-                <Link href={auth.login.url}>{auth.login.title}</Link>
-              </Button>
-              <Button asChild size="sm">
-                <Link href={auth.signup.url}>{auth.signup.title}</Link>
-              </Button>
-            </div>
-          )}
+          <div className="flex gap-2">
+            {/* <ModeToggle /> */}
+            <NavButton user={user} handleLogOut={handleLogOut} auth={auth} />
+          </div>
         </nav>
 
         {/* Mobile Menu */}
@@ -160,7 +157,8 @@ const Navbar = ({
             <Logo />
             <div>
               <span className="mr-2">
-                <ModeToggle />
+                <ShoppingCartBtn itemNumber={0}/>
+                {/* <ModeToggle /> */}
               </span>
               <Sheet>
                 <SheetTrigger asChild>
@@ -178,29 +176,15 @@ const Navbar = ({
                     <Accordion
                       type="single"
                       collapsible
-                      className="flex w-full flex-col gap-4"
+                      className="flex items-center w-full flex-col gap-4"
                     >
                       {menu.map((item) => renderMobileMenuItem(item))}
                     </Accordion>
-
-                    {user ? (
-                      <div className="flex flex-col gap-3">
-                        <Button asChild size="sm" onClick={handleLogOut}>
-                          <button>{auth.logout.title}</button>
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col gap-3">
-                        <Button asChild variant="outline" size="sm">
-                          <Link href={auth.login.url}>{auth.login.title}</Link>
-                        </Button>
-                        <Button asChild size="sm">
-                          <Link href={auth.signup.url}>
-                            {auth.signup.title}
-                          </Link>
-                        </Button>
-                      </div>
-                    )}
+                    <NavButton
+                      user={user}
+                      handleLogOut={handleLogOut}
+                      auth={auth}
+                    />
                   </div>
                 </SheetContent>
               </Sheet>
@@ -232,7 +216,7 @@ const renderMenuItem = (item: MenuItem) => {
     <NavigationMenuItem key={item.title}>
       <NavigationMenuLink
         href={item.url}
-        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
+        className="block px-3.5 py-2 text-sm font-medium text-fh-green-muted rounded-lg hover:text-fh-green-deep hover:bg-black/5 transition-colors"
       >
         {item.title}
       </NavigationMenuLink>
@@ -244,7 +228,7 @@ const renderMobileMenuItem = (item: MenuItem) => {
   if (item.items) {
     return (
       <AccordionItem key={item.title} value={item.title} className="border-b-0">
-        <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
+        <AccordionTrigger className="text-md py-0 font-semibold">
           {item.title}
         </AccordionTrigger>
         <AccordionContent className="mt-2">
@@ -257,9 +241,13 @@ const renderMobileMenuItem = (item: MenuItem) => {
   }
 
   return (
-    <a key={item.title} href={item.url} className="text-md font-semibold">
+    <Link
+      key={item.title}
+      href={item.url}
+      className="block px-3.5 py-2 text-sm font-medium text-fh-green-muted rounded-lg hover:text-fh-green-deep hover:bg-black/5 transition-colors"
+    >
       {item.title}
-    </a>
+    </Link>
   );
 };
 

@@ -7,7 +7,7 @@ export default function Logo() {
       <div className="w-9 h-9 rounded-[10px] bg-fh-coral flex items-center justify-center text-lg text-white font-bold">
         🍱
       </div>
-      <span className="font-display text-[22px] font-bold tracking-tight text-fh-green-deep">
+      <span className="font-display text-2xl font-bold tracking-tight text-fh-green-deep">
         Food<span className="text-fh-coral">Hub</span>
       </span>
     </Link>
