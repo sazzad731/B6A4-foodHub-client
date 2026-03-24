@@ -106,7 +106,7 @@ export default function Categories() {
             <Link
               key={item.id}
               href={`/meals?category=${item.slug}`}
-              className={`shrink-0 w-29.5 rounded-2xl border-[1.5px] px-3 pt-5 pb-4 flex flex-col items-center gap-3 cursor-pointer transition-all duration-200
+              className={`shrink-0 w-40 rounded-2xl border-[1.5px] px-3 pt-5 pb-4 flex flex-col items-center gap-3 cursor-pointer transition-all duration-200
               ${
                 pathName === `/meals?category=${item.slug}`
                   ? "bg-fh-coral border-fh-coral text-white shadow-lg shadow-fh-coral/30 -translate-y-1"
