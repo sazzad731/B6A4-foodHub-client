@@ -2,12 +2,13 @@ import Link from 'next/link'
 import { Button } from '../ui/button'
 import { ShoppingCart } from 'lucide-react'
 
-export default function ShoppingCartBtn({itemNumber}: {itemNumber: number}) {
+export default function ShoppingCartBtn() {
+  const itemNumber = 0;
   return (
     <Link href="/" className="cursor-pointer">
       <Button
         variant="ghost"
-        className="relative size-10 p-0 hover:bg-fh-cream-mid"
+        className="relative size-10 p-0 hover:bg-fh-cream-mid cursor-pointer"
       >
         <ShoppingCart className="size-5 text-fh-green-deep" strokeWidth={2.5} />
         {itemNumber !== 0 && (

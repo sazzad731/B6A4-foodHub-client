@@ -132,7 +132,7 @@ const Navbar = ({
     <section
       className={`fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 ${scrolled ? "shadow-lg" : ""} py-4 bg-fh-cream/88 backdrop-blur-lg border-b border-b-fh-green-deep/7`}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 xl:px-0">
         {/* Desktop Menu */}
         <nav className="hidden items-center justify-between lg:flex">
           {/* Logo */}
@@ -145,7 +145,6 @@ const Navbar = ({
             </NavigationMenu>
           </div>
           <div className="flex gap-2">
-            {/* <ModeToggle /> */}
             <NavButton user={user} handleLogOut={handleLogOut} auth={auth} />
           </div>
         </nav>
@@ -157,8 +156,7 @@ const Navbar = ({
             <Logo />
             <div>
               <span className="mr-2">
-                <ShoppingCartBtn itemNumber={0}/>
-                {/* <ModeToggle /> */}
+                <ShoppingCartBtn/>
               </span>
               <Sheet>
                 <SheetTrigger asChild>

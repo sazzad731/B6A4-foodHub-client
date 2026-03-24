@@ -14,9 +14,9 @@ export default function NavButton({ user, handleLogOut, auth }: ButtonProps) {
     return (
       <div className="flex items-center justify-center gap-4">
         <div className="hidden lg:block">
-          <ShoppingCartBtn itemNumber={0} />
+          <ShoppingCartBtn />
         </div>
-        <Button size="sm" onClick={handleLogOut}>
+        <Button size="sm" onClick={handleLogOut} className="bg-fh-coral cursor-pointer">
           {auth.logout.title}
         </Button>
       </div>

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 import Logo from "@/components/shared/Logo"
-import { Route } from "@/types/routes.types";
+import { Route } from "@/types";
 import { adminRoute } from "@/routes/admin.routes";
 import { providerRoute } from "@/routes/provider.routes";
 import { customerRoute } from "@/routes/customer.routes";

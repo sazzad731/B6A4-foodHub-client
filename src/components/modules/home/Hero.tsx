@@ -100,23 +100,17 @@ export default function Hero() {
             </Link>
           </div>
           {/* Stats */}
-          <div
-            className="flex flex-wrap gap-8 mt-14 pt-10 border-t border-fh-cream/10"
-          >
+          <div className="flex flex-wrap gap-8 mt-14 pt-10 border-t border-fh-cream/10">
             {[
               ["340+", "Menu items"],
               ["80+", "Restaurants"],
               ["4.8★", "Avg. rating"],
             ].map(([num, label]) => (
               <div key={label}>
-                <div
-                  className="font-display text-3xl font-bold text-fh-cream"
-                >
+                <div className="font-display text-3xl font-bold text-fh-cream">
                   {num}
                 </div>
-                <div className="text-[13px] mt-1 text-fh-cream/45">
-                  {label}
-                </div>
+                <div className="text-[13px] mt-1 text-fh-cream/45">{label}</div>
               </div>
             ))}
           </div>
@@ -145,22 +139,18 @@ export default function Hero() {
                   {card.provider}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="font-display text-lg font-bold text-fh-amber-light" >
+                  <span className="font-display text-lg font-bold text-fh-amber-light">
                     {card.price}
                   </span>
-                  <span
-                    className="text-xs text-fh-cream"
-                  >
+                  <span className="text-xs text-fh-cream">
                     ⭐ {card.rating}
                   </span>
                 </div>
               </div>
             </div>
           ))}
-          <div
-            className="absolute top-60 2xl:left-60 xl:left-45 left-25 rounded-xl px-3.5 py-3 flex items-center gap-2.5 text-white text-[13px] font-semibold animate-float-b bg-fh-coral shadow-lg shadow-fh-coral/50"
-          >
-            <span className="w-2 h-2 rounded-full bg-white animate-pulse2" />
+          <div className="absolute top-60 2xl:left-60 xl:left-45 left-25 rounded-xl px-3.5 py-3 flex items-center gap-2.5 text-[13px] font-semibold animate-float-b mb-7 border text-xs tracking-wider text-fh-coral-light bg-fh-coral-light/12 border-fh-coral-light/25 shadow-lg shadow-fh-coral/20">
+            <span className="w-2 h-2 rounded-full bg-fh-coral animate-pulse2" />
             Order just delivered to Agrabad!
           </div>
         </div>
