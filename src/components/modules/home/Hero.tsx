@@ -43,8 +43,8 @@ const FLOAT_CARDS = [
 
 export default function Hero() {
   return (
-    <section className="min-h-screen bg-fh-green-deep">
-      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12 xl:px-0 px-4 lg:pt-45 pt-30 relative overflow-hidden">
+    <section className="bg-fh-green-deep">
+      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12 xl:px-0 px-4 lg:py-40 pt-30 pb-45 relative overflow-hidden">
         {/* bg glows */}
         <div className="absolute inset-0 pointer-events-none">
           <div

@@ -56,7 +56,7 @@ export function DashboardSidebar({user, ...props }: {user: {role: string} & Reac
           <SidebarMenu>
             {routes.map((item) => (
               <SidebarMenuItem key={item.title} className="mb-3 mx-3">
-                <SidebarMenuButton className={`${pathName === item.url ? "bg-base-300" : "bg-secondary"} hover:bg-base-300 cursor-pointer font-medium`}>
+                <SidebarMenuButton className={`${pathName === item.url ? "" : "bg-secondary"} cursor-pointer font-medium`}>
                   <Link href={item.url} className="w-full">{item.title}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
