@@ -71,8 +71,7 @@ export default function Hero() {
           </div>
           <h1 className="font-display text-[clamp(46px,5.5vw,80px)] font-bold leading-[1.02] tracking-[-2px] mb-7 text-fh-cream">
             Discover
-            <br />
-            <em className="font-light text-fh-coral-light">delicious</em>
+            <em className="font-light text-fh-coral-light"> delicious</em>
             <br />
             meals near you
           </h1>
