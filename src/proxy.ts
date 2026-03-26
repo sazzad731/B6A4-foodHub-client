@@ -3,7 +3,7 @@ import { getUser, userLogOut } from "./services/auth";
 import { ROLES } from "./constants/roles";
 
 
-const ALLOWED_ROLE = [ROLES.customer, ROLES.provider, ROLES.admin];
+const ALLOWED_ROLE = [ROLES.CUSTOMER, ROLES.PROVIDER, ROLES.ADMIN];
 
 
 

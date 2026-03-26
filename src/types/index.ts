@@ -1,3 +1,12 @@
+export interface ERole {
+  ADMIN: "ADMIN";
+  PROVIDER: "PROVIDER";
+  CUSTOMER: "CUSTOMER";
+}
+
+
+
+
 export interface Route {
   title: string;
   url: string;

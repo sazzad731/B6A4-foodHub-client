@@ -17,9 +17,9 @@ const DashboardLayout = async({customer, provider, admin}: {customer: React.Reac
             <Separator orientation="vertical" className="mr-2 h-4" />
           </div>
         </header>
-        {user?.role === ROLES.customer && customer}
-        {user?.role === ROLES.provider && provider}
-        {user?.role === ROLES.admin && admin}
+        {user?.role === ROLES.CUSTOMER && customer}
+        {user?.role === ROLES.PROVIDER && provider}
+        {user?.role === ROLES.ADMIN && admin}
       </SidebarInset>
     </SidebarProvider>
   );

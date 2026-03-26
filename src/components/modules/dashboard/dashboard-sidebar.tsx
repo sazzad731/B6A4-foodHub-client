@@ -27,13 +27,13 @@ export function DashboardSidebar({user, ...props }: {user: {role: string} & Reac
   let routes: Route[] = [];
 
   switch (user.role) {
-    case ROLES.admin:
+    case ROLES.ADMIN:
       routes = adminRoute;
       break;
-    case ROLES.provider:
+    case ROLES.PROVIDER:
       routes = providerRoute;
       break;
-    case ROLES.customer:
+    case ROLES.CUSTOMER:
       routes = customerRoute;
       break;
     default:
