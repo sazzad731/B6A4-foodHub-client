@@ -16,14 +16,15 @@ export interface Route {
 export interface TMeal {
   id: string;
   providerId: string;
-  providerName: string;
+  provider: { restaurantName: string; image: string };
   categoryId: string;
-  categoryName: string;
+  category: { name: string };
   title: string;
   description: string;
   price: number;
   image: string;
-  rating: number;
+  avgRating: number;
+  prepTime: number;
   reviewCount: number;
   isAvailable: boolean;
   isVegan: boolean;

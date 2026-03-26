@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { createProfile } from '@/services/seller'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from "zod"
@@ -30,19 +29,6 @@ export default function CreateProfileForm() {
     },
     onSubmit: async ({ value }) => {
       const toastId = toast.loading("Profile creating")
-      try {
-        const result = await createProfile(value);
-        console.log(result);
-        if (result.success) {
-          toast.success(result.message, {id: toastId});
-        } else if (result.success === false && result.error.code === "P2002") {
-          toast.error("Profile already created", { id: toastId });
-        } else {
-          toast.error(result.message), {id: toastId};
-        }
-      } catch (error: any) {
-        toast.error(error.message, { id: toastId });
-      }
     },
   });
   return (

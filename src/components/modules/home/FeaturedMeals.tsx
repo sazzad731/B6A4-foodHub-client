@@ -1,113 +1,10 @@
 import Link from "next/link";
 import MealCard from "@/components/shared/MealCard";
+import { getAllMeals } from "@/services/meals";
+import { TMeal } from "@/types";
 
-export default function Featuredmeals() {
-  const meals = [
-    {
-      id: "1",
-      providerId: "p1",
-      providerName: "Pizza Palace",
-      categoryId: "4",
-      categoryName: "Italian · Pizza",
-      title: "Wood-fired Margherita",
-      description:
-        "Classic tomato, fresh mozzarella, basil on a wood-fired crust.",
-      price: 320,
-      image:
-        "https://plus.unsplash.com/premium_photo-1673439304183-8840bd0dc1bf?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      rating: 4.9,
-      reviewCount: 128,
-      isAvailable: true,
-      isVegan: false,
-      tags: ["popular"],
-    },
-    {
-      id: "2",
-      providerId: "p2",
-      providerName: "Burger House",
-      categoryId: "3",
-      categoryName: "American · Burgers",
-      title: "Double Smash Burger",
-      description: "Two smashed beef patties, cheddar, caramelised onion.",
-      price: 350,
-      image:
-        "https://plus.unsplash.com/premium_photo-1683619761492-639240d29bb5?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      rating: 4.8,
-      reviewCount: 204,
-      isAvailable: true,
-      isVegan: false,
-      tags: ["new"],
-    },
-    {
-      id: "3",
-      providerId: "p3",
-      providerName: "Sakura Restaurant",
-      categoryId: "6",
-      categoryName: "Japanese · Sushi",
-      title: "Premium Salmon Roll (8pcs)",
-      description: "Fresh Atlantic salmon, cucumber, avocado, soy glaze.",
-      price: 480,
-      image:
-        "https://images.unsplash.com/photo-1635526910429-051cf1ed127e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      rating: 4.7,
-      reviewCount: 89,
-      isAvailable: true,
-      isVegan: false,
-      tags: ["luxury"],
-    },
-    {
-      id: "4",
-      providerId: "p4",
-      providerName: "Roma Kitchen",
-      categoryId: "7",
-      categoryName: "Italian · Pasta",
-      title: "Creamy Carbonara",
-      description: "Al dente spaghetti, guanciale, egg yolk, aged pecorino.",
-      price: 290,
-      image:
-        "https://images.unsplash.com/photo-1633337474564-1d9478ca4e2e?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      rating: 4.6,
-      reviewCount: 67,
-      isAvailable: true,
-      isVegan: false,
-      tags: ["popular"],
-    },
-    {
-      id: "5",
-      providerId: "p5",
-      providerName: "Noodle Bar CTG",
-      categoryId: "5",
-      categoryName: "Japanese · Ramen",
-      title: "Rich Tonkotsu Ramen",
-      description:
-        "18-hour pork bone broth, chashu pork, soft-boiled egg, nori.",
-      price: 360,
-      image:
-        "https://images.unsplash.com/photo-1755151022192-f63b45cfa651?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      rating: 4.5,
-      reviewCount: 55,
-      isAvailable: true,
-      isVegan: false,
-      tags: ["famous"],
-    },
-    {
-      id: "6",
-      providerId: "p6",
-      providerName: "Green Garden",
-      categoryId: "8",
-      categoryName: "Healthy · Salads",
-      title: "Greek Goddess Salad",
-      description: "Romaine, cherry tomato, olives, feta, lemon-herb dressing.",
-      price: 220,
-      image:
-        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      rating: 4.8,
-      reviewCount: 43,
-      isAvailable: true,
-      isVegan: true,
-      tags: ["vegan"],
-    },
-  ];
+export default async function FeaturedMeals() {
+  const { data: meals } = await getAllMeals();
 
 
   const badgeColors = [
@@ -137,8 +34,8 @@ export default function Featuredmeals() {
             Browse all →
           </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {meals.map((meal, index) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {meals?.map((meal: TMeal, index: number) => {
             const randomColor = badgeColors[index % badgeColors.length];
             return (
             <Link href={`/meals/${meal.id}`} key={meal.id}>
