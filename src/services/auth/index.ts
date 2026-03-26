@@ -12,7 +12,7 @@ export interface TUser {
 
 export const registerUser = async (userData: TUser) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/register`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -31,7 +31,7 @@ export const registerUser = async (userData: TUser) => {
 
 export const loginUser = async (userData: FieldValues) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

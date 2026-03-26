@@ -21,7 +21,7 @@ const formSchema = z
     role: z.string().min(1, "Please select a role."),
     name: z.string().min(1, "Please enter your name"),
     email: z.email(),
-    phone: z.number().min(11, "Please provide a valid number"),
+    phone: z.string().min(11, "Please provide a valid number"),
     restaurantName: z.string(),
     address: z.string(),
     image: z.string(),
@@ -58,12 +58,13 @@ export default function RegisterForm() {
   const [role, setRole] = useState("CUSTOMER");
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  console.log(loading)
   const form = useForm({
     defaultValues: {
       role: "CUSTOMER",
       name: "",
       email: "",
-      phone: 0,
+      phone: "",
       restaurantName: "",
       address: "", 
       image: "",
@@ -74,32 +75,25 @@ export default function RegisterForm() {
     },
     onSubmit: async ({ value }) => {
       const toastId = toast.loading("Creating user");
-      const { role, name, email, phone, restaurantName, address, image, password} = value;
-      const customerValue = {
-        role,
-        name,
-        email,
-        phone,
-        password,
-      }
-
-      const providerValue = {
-        ...customerValue,
-        restaurantName,
-        address,
-        image
-      }
       try {
-        const result = await registerUser(role === ROLES.PROVIDER ? providerValue : customerValue);
+        setLoading(true)
+        const result = await registerUser(value);
+        console.log(result)
         if (result.success) {
           toast.success("Registration success. Please login", { id: toastId });
+          setLoading(false)
           router.push("/login");
-        } else if (result.success === false && result.error.code === "P2002") {
+        } else if (!result.success) {
+          setLoading(false)
+          toast.error(result.message, {id: toastId})
+        } else if (!result.success && result.error.code === "P2002") {
+          setLoading(false)
           toast.error("User already exist or " + result.message, {
             id: toastId,
           });
         }
       } catch (error: any) {
+        setLoading(false)
         toast.error(error.message, { id: toastId });
       }
     },
@@ -254,7 +248,7 @@ export default function RegisterForm() {
                     id={field.name}
                     name={field.name}
                     type="number"
-                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                    onChange={(e) => field.handleChange(e.target.value)}
                     placeholder="Your phone number"
                     className="h-11"
                   />
@@ -385,7 +379,7 @@ export default function RegisterForm() {
                   />
                   <button
                     type="button"
-                    className="absolute right-8 top-10 text-fh-green-muted"
+                    className="absolute right-8 top-11 text-fh-green-muted"
                     onClick={() => setShow(!show)}
                     style={{ width: "0px" }}
                   >
