@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function Logo({foodColor = "text-fh-green-deep"}: {foodColor?: string}) {
   return (
-    <Link href="/" className="flex items-center gap-2.5">
+    <Link href="/" className="flex items-center gap-2.5 cursor-pointer z-50">
       <div className="w-9 h-9 rounded-[10px] bg-fh-coral flex items-center justify-center text-lg text-white font-bold">
         🍱
       </div>

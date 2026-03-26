@@ -8,12 +8,14 @@ export default function Register() {
      <div className="min-h-screen flex bg-fh-green-deep">
        {/* Left panel */}
        <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-14 relative overflow-hidden">
-         <div className="absolute inset-0" style={{
+         <div
+           className="absolute inset-0"
+           style={{
              background:
                "radial-gradient(ellipse 60% 60% at 60% 40%,rgba(138,184,144,0.1) 0%,transparent 60%)",
            }}
          />
-         <Logo foodColor="text-white"/>
+         <Logo foodColor="text-white" />
          <div className="relative z-10 space-y-5">
            <h2 className="font-display text-5xl font-bold text-fh-cream leading-tight tracking-tight">
              Join the{" "}
@@ -58,7 +60,20 @@ export default function Register() {
            <p className="text-fh-green-muted text-sm mb-7">
              Get started — it&apos;s free.
            </p>
-           <RegisterForm/>
+
+           <RegisterForm />
+
+           <div className="text-center">
+             <p className="text-center text-sm text-fh-green-muted mt-6">
+               Already have an account?{" "}
+               <Link
+                 href="/login"
+                 className="text-fh-coral font-semibold hover:underline"
+               >
+                 Log in →
+               </Link>
+             </p>
+           </div>
          </div>
        </div>
      </div>

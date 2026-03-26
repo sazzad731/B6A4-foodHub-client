@@ -1,169 +1,145 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
-import * as React from "react";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Lock } from "lucide-react";
 
 // Shadcn UI Components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { toast } from "sonner";
+import { useForm } from "@tanstack/react-form";
+import { Field, FieldError, FieldGroup, FieldLabel, } from "@/components/ui/field";
+import * as z from "zod"
 import { loginUser } from "@/services/auth";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
-// Form Validation Schema
-const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string(),
-});
+const formSchema = z
+  .object({
+    email: z.email(),
+    password: z.string().min(6, "Minimum length is 6"),
+  })
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const router = useRouter();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const form = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
-  });
-
-  
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const toastId = toast.loading("Authenticating ...")
-    try {
-      const res = await loginUser(values);
-      if (res.success) {
-        toast.success("Login successful! Redirecting...", {id: toastId});
-        router.push("/dashboard");
+    validators: {
+      onSubmit: formSchema,
+    },
+    onSubmit: async ({ value }) => {
+      const toastId = toast.loading("Creating user");
+      try {
+        setLoading(true)
+        const result = await loginUser(value);
+        if (result.success) {
+          toast.success("Login success. redirecting!", { id: toastId });
+          setLoading(false)
+          router.push("/dashboard");
+        } else if (!result.success) {
+          setLoading(false)
+          toast.error(result.message, {id: toastId})
+        }
+      } catch (error: any) {
+        setLoading(false)
+        toast.error(error.message, { id: toastId });
       }
-    } catch (error: any) {
-      toast.error(error || "Login failed")
-    }
-  }
-
+    },
+  });
   return (
-    <div className="min-h-screen bg-linear-to-br from-red-50 to-orange-50 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* Demo Accounts Section (Static) */}
-        <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="font-semibold text-blue-900 mb-3">Demo Accounts</h3>
-          <div className="space-y-2 text-sm text-blue-800">
-            <p>
-              <strong>Admin:</strong> admin@foodhub.test / admin123
-            </p>
-            <p>
-              <strong>Provider:</strong> chef@pizzeria.com / provider123
-            </p>
-            <p>
-              <strong>Customer:</strong> john@example.com / password123
-            </p>
-          </div>
-        </div>
+    <Card className="bg-transparent shadow-none border-0 py-0 gap-0">
+      <form
+        className="space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
+      >
+        <FieldGroup>
+          {/* Email Field */}
+          <form.Field
+            name="email"
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-fh-green-deep font-medium"
+                  >
+                    Email Address
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="email"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="Your email address"
+                    className="h-11"
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          />
 
-        {/* Login Card */}
-        <Card className="p-8 shadow-lg bg-white">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center justify-center gap-2">
-              <span>🍽️</span>
-              <span>FoodHub</span>
-            </h1>
-            <p className="text-gray-600 mt-2">Sign in to your account</p>
-          </div>
+          {/* password Field */}
+          <form.Field
+            name="password"
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field data-invalid={isInvalid} className="relative">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-fh-green-deep font-medium"
+                  >
+                    password
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type={show ? "text" : "password"}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="Enter your password"
+                    className="h-11"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-8 top-11 text-fh-green-muted"
+                    onClick={() => setShow(!show)}
+                    style={{ width: "0px" }}
+                  >
+                    {show ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          />
+        </FieldGroup>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Email Field */}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">
-                      Email Address
-                    </FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                        <Input
-                          placeholder="name@example.com"
-                          className="pl-10"
-                          {...field}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Password Field */}
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          className="pl-10"
-                          {...field}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                type="submit"
-                className="w-full bg-red-600 hover:bg-red-700 h-11 text-base font-semibold text-white"
-              >
-                Login
-              </Button>
-            </form>
-          </Form>
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/register"
-                className="text-red-600 font-semibold hover:underline"
-              >
-                Register
-              </Link>
-            </p>
-          </div>
-        </Card>
-
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <Link
-            href="/"
-            className="text-gray-600 hover:text-gray-900 text-sm underline-offset-4 hover:underline"
-          >
-            Back to Home
-          </Link>
-        </div>
-      </div>
-    </div>
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full h-11 bg-fh-coral hover:bg-fh-coral-hover text-white font-semibold mt-2 cursor-pointer"
+        >
+          Log in
+        </Button>
+      </form>
+    </Card>
   );
 }

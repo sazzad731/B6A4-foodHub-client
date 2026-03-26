@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 
 // Shadcn UI Components
 import { Button } from "@/components/ui/button";
@@ -399,22 +398,11 @@ export default function RegisterForm() {
         <Button
           type="submit"
           disabled={loading}
-          className="w-full h-11 bg-fh-coral hover:bg-fh-coral-hover text-white font-semibold mt-2"
+          className="w-full h-11 bg-fh-coral hover:bg-fh-coral-hover text-white font-semibold mt-2 cursor-pointer"
         >
           Create {role === "PROVIDER" ? "Provider" : "Customer"} Account →
         </Button>
       </form>
-      <div className="text-center">
-        <p className="text-center text-sm text-fh-green-muted mt-6">
-          Already have an account?{" "}
-          <Link
-            href="/login"
-            className="text-fh-coral font-semibold hover:underline"
-          >
-            Log in →
-          </Link>
-        </p>
-      </div>
     </Card>
   );
 }
