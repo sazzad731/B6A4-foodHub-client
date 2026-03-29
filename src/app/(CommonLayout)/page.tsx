@@ -1,6 +1,5 @@
 import Categories from "@/components/modules/home/Categories";
 import FeaturedMeals from "@/components/modules/home/FeaturedMeals";
-import Footer from "@/components/modules/home/Footer";
 import Hero from "@/components/modules/home/Hero";
 import HowItWorks from "@/components/modules/home/HowItWorks";
 import ProviderCTA from "@/components/modules/home/ProviderCTA";
@@ -19,7 +18,6 @@ export default function Home() {
       <HowItWorks />
       <Reviews />
       <ProviderCTA />
-      <Footer/>
     </>
   );
 }

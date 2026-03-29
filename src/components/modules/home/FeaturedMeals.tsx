@@ -1,10 +1,10 @@
 import Link from "next/link";
 import MealCard from "@/components/shared/MealCard";
-import { getAllMeals } from "@/services/meals";
+import { getFeaturedMeals } from "@/services/meals";
 import { TMeal } from "@/types";
 
 export default async function FeaturedMeals() {
-  const { data: meals } = await getAllMeals();
+  const {data: meals} = await getFeaturedMeals();
 
 
   const badgeColors = [
