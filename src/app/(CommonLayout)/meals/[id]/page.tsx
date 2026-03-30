@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { getMealDetail } from "@/services/meals";
 import { Clock, Minus, Plus, ShieldCheck, Star, Truck } from "lucide-react";
 import Image from "next/image";
@@ -162,6 +163,51 @@ export default async function MealDetail({ params }: {params: Promise<{id: strin
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+
+        {/* Reviews */}
+        <div className="mb-16">
+          <h2 className="font-display text-2xl font-bold text-fh-green-deep mb-6">
+            Customer Reviews{" "}
+            <span className="text-fh-green-light font-light text-xl">
+              ({meal.reviews.length})
+            </span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {meal.reviews.map((review: any) => (
+              <Card key={review.id} className="border-fh-cream-dark">
+                <CardContent className="p-5">
+                  <div className="flex gap-0.5 mb-3 text-fh-amber">
+                    {"★".repeat(review.rating)}
+                    {"☆".repeat(5 - review.rating)}
+                  </div>
+                  <p className="font-display italic text-sm text-fh-green-muted leading-relaxed mb-4 font-light">
+                    "{review.comment}"
+                  </p>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-fh-green-soft flex items-center justify-center text-white text-xs font-bold">
+                      {review.customer.name
+                        .split(" ")
+                        .map((n: string) => n[0])
+                        .join("")}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-fh-green-deep">
+                        {review.customer.name}
+                      </p>
+                      <p className="text-[11px] text-fh-green-light">
+                        {new Date(review.createdAt).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </div>

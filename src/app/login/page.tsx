@@ -57,7 +57,7 @@ const Login = () => {
               Demo credentials
             </p>
             <p className="text-fh-green-muted">
-              <strong>Admin:</strong> admin@foodhub.com / admin123
+              <strong>Admin:</strong> admin@foodhub.test / admin123
             </p>
             <p className="text-fh-green-muted">
               <strong>Provider:</strong> chef@pizzeria.com / provider123
@@ -67,8 +67,8 @@ const Login = () => {
             </p>
           </div>
 
-          <LoginForm/>
-          
+          <LoginForm />
+
           <p className="text-center text-sm text-fh-green-muted mt-6">
             Don&apos;t have an account?{" "}
             <Link

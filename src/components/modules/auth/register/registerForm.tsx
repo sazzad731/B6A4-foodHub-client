@@ -57,7 +57,6 @@ export default function RegisterForm() {
   const [role, setRole] = useState("CUSTOMER");
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
-  console.log(loading)
   const form = useForm({
     defaultValues: {
       role: "CUSTOMER",
@@ -77,7 +76,6 @@ export default function RegisterForm() {
       try {
         setLoading(true)
         const result = await registerUser(value);
-        console.log(result)
         if (result.success) {
           toast.success("Registration success. Please login", { id: toastId });
           setLoading(false)
