@@ -1,8 +1,6 @@
 "use client";
 
 import { Menu } from "lucide-react";
-
-
 import {
   Accordion,
   AccordionContent,
@@ -26,17 +24,13 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getUser, userLogOut } from "@/services/auth";
-import { ModeToggle } from "./ModeToggle";
 import { toast } from "sonner";
 import Logo from "./Logo";
 import NavButton from "./NavButton";
 import ShoppingCartBtn from "./ShoppingCartBtn";
-
-
 
 interface MenuItem {
   title: string;
@@ -56,17 +50,9 @@ interface NavbarProps {
   };
   menu?: MenuItem[];
   auth?: {
-    login: {
-      title: string;
-      url: string;
-    };
-    signup: {
-      title: string;
-      url: string;
-    };
-    logout: {
-      title: string;
-    };
+    login: { title: string; url: string };
+    signup: { title: string; url: string };
+    logout: { title: string };
   };
 }
 
@@ -95,47 +81,41 @@ const Navbar = ({
     getCurrentUser();
   }, [loading]);
 
-
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", fn);
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-
   const handleLogOut = () => {
     userLogOut();
-    toast.success("Log out success")
+    toast.success("Log out success");
+    setUser(null);
     setLoading(!loading);
   };
 
   const menu = [
-    { title: "Home", url: "/" },
-    {
-      title: "Pricing",
-      url: "#",
-    },
-    {
-      title: "Blog",
-      url: "#",
-    }
-  ]
+    { title: "Meals", url: "/meals" },
+    { title: "Restaurants", url: "/providers" },
+    { title: "Blog", url: "#" },
+  ];
 
-  if(user){
+  if (user) {
     menu.push({
       title: "Dashboard",
-      url: "/dashboard"
-    })
+      url: "/dashboard",
+    });
   }
 
   return (
     <section
-      className={`fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 ${scrolled ? "shadow-lg" : ""} py-4 bg-fh-cream/88 backdrop-blur-lg border-b border-b-fh-green-deep/7`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 ${
+        scrolled ? "shadow-lg" : ""
+      } py-4 bg-fh-cream/88 backdrop-blur-lg border-b border-b-fh-green-deep/7`}
     >
       <div className="container mx-auto px-4 xl:px-0">
         {/* Desktop Menu */}
         <nav className="hidden items-center justify-between lg:flex">
-          {/* Logo */}
           <Logo />
           <div className="flex items-center justify-center">
             <NavigationMenu>
@@ -152,11 +132,10 @@ const Navbar = ({
         {/* Mobile Menu */}
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
-            {/* Logo */}
             <Logo />
             <div>
               <span className="mr-2">
-                <ShoppingCartBtn/>
+                <ShoppingCartBtn />
               </span>
               <Sheet>
                 <SheetTrigger asChild>
@@ -167,7 +146,9 @@ const Navbar = ({
                 <SheetContent className="overflow-y-auto">
                   <SheetHeader>
                     <SheetTitle>
-                      <Link href="/" className="flex items-center gap-2"></Link>
+                      <Link href="/" className="flex items-center gap-2">
+                        <Logo />
+                      </Link>
                     </SheetTitle>
                   </SheetHeader>
                   <div className="flex flex-col gap-6 p-4">
@@ -212,11 +193,13 @@ const renderMenuItem = (item: MenuItem) => {
 
   return (
     <NavigationMenuItem key={item.title}>
-      <NavigationMenuLink
-        href={item.url}
-        className="block px-3.5 py-2 text-sm font-medium text-fh-green-muted rounded-lg hover:text-fh-green-deep hover:bg-black/5 transition-colors"
-      >
-        {item.title}
+      <NavigationMenuLink asChild>
+        <Link
+          href={item.url}
+          className="block px-3.5 py-2 text-sm font-medium text-fh-green-muted rounded-lg hover:text-fh-green-deep hover:bg-black/5 transition-colors"
+        >
+          {item.title}
+        </Link>
       </NavigationMenuLink>
     </NavigationMenuItem>
   );
@@ -251,7 +234,7 @@ const renderMobileMenuItem = (item: MenuItem) => {
 
 const SubMenuLink = ({ item }: { item: MenuItem }) => {
   return (
-    <a
+    <Link
       className="flex min-w-80 flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-muted hover:text-accent-foreground"
       href={item.url}
     >
@@ -264,7 +247,7 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
           </p>
         )}
       </div>
-    </a>
+    </Link>
   );
 };
 

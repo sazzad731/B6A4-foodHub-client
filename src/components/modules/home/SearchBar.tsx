@@ -28,7 +28,7 @@ export default function SearchBar() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") router.push(`/meals?q=${query}`);
+                if (e.key === "Enter") router.push(`/meals?search=${query}`);
               }}
             />
           </div>
@@ -51,8 +51,8 @@ export default function SearchBar() {
             </SelectContent>
           </Select>
           <Button
-            onClick={() => router.push(`/meals?q=${query}`)}
-            className="bg-fh-coral hover:bg-fh-coral-hover text-white h-12 px-7 text-base font-semibold rounded-xl sm:ml-2"
+            onClick={() => router.push(`/meals?search=${query}`)}
+            className="bg-fh-coral hover:bg-fh-coral-hover text-white h-12 px-7 text-base font-semibold rounded-xl sm:ml-2 cursor-pointer"
           >
             Find Food
           </Button>
