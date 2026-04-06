@@ -1,86 +1,39 @@
 "use client";
-import { usePathname} from "next/navigation";
+import { useSearchParams} from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { getAllCategory } from "@/services/category";
+import { toast } from "sonner";
 
+
+interface TCategories {
+  id: string;
+  name: string;
+  slug: string;
+  image: string;
+  mealCount: number;
+  sortOrder: number;
+  createdAt: Date;
+  updatedAt: Date
+}
 export default function Categories() {
-  const pathName = usePathname();
+  const [categories, setCategories] = useState<TCategories[]>([]);
+  const searchParams = useSearchParams();
 
-  const categories = [
-    {
-      id: "1",
-      name: "Bengali",
-      image:
-        "https://images.unsplash.com/photo-1588644525273-f37b60d78512?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      mealCount: 90,
-      slug: "bengali",
-    },
-    {
-      id: "2",
-      name: "Burgers",
-      image:
-        "https://plus.unsplash.com/premium_vector-1721890180863-f518975cd5a0?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      mealCount: 62,
-      slug: "burgers",
-    },
-    {
-      id: "3",
-      name: "Pizza",
-      image:
-        "https://plus.unsplash.com/premium_vector-1730515692314-ba66a6869cc2?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      mealCount: 48,
-      slug: "pizza",
-    },
-    {
-      id: "4",
-      name: "Chinese",
-      image:
-        "https://img.freepik.com/premium-photo/time-lunch-chinese-food-lunchtime-illustration_641503-88453.jpg?w=1060",
-      mealCount: 55,
-      slug: "chinese",
-    },
-    {
-      id: "5",
-      name: "Sushi",
-      image:
-        "https://img.freepik.com/free-vector/hand-drawn-sushi-illustration_52683-89537.jpg?t=st=1774388050~exp=1774391650~hmac=ccf854332e9e6e33f401f7b9c06c3505c26612fb93f8185a2f38746b418d8110&w=1480",
-      mealCount: 34,
-      slug: "sushi",
-    },
-    {
-      id: "6",
-      name: "Pasta",
-      image:
-        "https://plus.unsplash.com/premium_vector-1731205147480-f63a955fce56?q=80&w=919&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      mealCount: 40,
-      slug: "pasta",
-    },
-    {
-      id: "7",
-      name: "Salads",
-      image:
-        "https://img.freepik.com/free-vector/colorful-drawing-vegetable-salad_1284-40928.jpg?t=st=1774387430~exp=1774391030~hmac=24d0159d388e7edc2e6a7474239e4e5cd6084341e7e849d9bdfa414437480abc&w=1480",
-      mealCount: 28,
-      slug: "salads",
-    },
-    {
-      id: "8",
-      name: "Desserts",
-      image:
-        "https://img.freepik.com/free-vector/hand-drawn-american-cuisine-illustration_23-2149330334.jpg?t=st=1774387496~exp=1774391096~hmac=4fe0d697a0923adc722a949e4acc3a5b5f341e3867b165f4d76f1653ca6a701e&w=1060",
-      mealCount: 44,
-      slug: "desserts",
-    },
-    {
-      id: "9",
-      name: "Drinks",
-      image:
-        "https://img.freepik.com/premium-vector/vibrant-colorful-toast-illustration-perfect-new-year-celebrations-showcasing-festive-drinks-fruit-new-year-toast-customizable-semi-flat-illustration_538213-149203.jpg?w=1060",
-      mealCount: 30,
-      slug: "drinks",
-    },
-  ];
+  const category = searchParams.get("category")
 
+  useEffect(() => {
+    const allCategories = async () => {
+      try {
+        const categoryData = await getAllCategory();
+        setCategories(categoryData.data)
+      } catch (error: any) {
+        toast.error(error.message)
+      }
+    }
+    allCategories();
+  }, [])
   return (
     <section className="bg-fh-cream">
       <div className="container mx-auto px-4 lg:px-0 sm:py-30 pt-45 pb-20">
@@ -105,10 +58,10 @@ export default function Categories() {
           {categories.map((item) => (
             <Link
               key={item.id}
-              href={`/meals?category=${item.slug}`}
+              href={`/meals?category=${item.id}`}
               className={`shrink-0 w-40 rounded-2xl border-[1.5px] px-3 pt-5 pb-4 flex flex-col items-center gap-3 cursor-pointer transition-all duration-200
               ${
-                pathName === `/meals?category=${item.slug}`
+                category === item.id
                   ? "bg-fh-coral border-fh-coral text-white shadow-lg shadow-fh-coral/30 -translate-y-1"
                   : "bg-white border-fh-cream-dark hover:border-fh-coral hover:bg-fh-coral/5 hover:-translate-y-1 hover:shadow-lg"
               }`}
@@ -123,12 +76,12 @@ export default function Categories() {
               </div>
 
               <span
-                className={`text-[13px] font-semibold ${pathName === `/meals?category=${item.slug}` ? "text-white" : "text-fh-green-deep"}`}
+                className={`text-[13px] font-semibold ${category === item.id ? "text-white" : "text-fh-green-deep"}`}
               >
                 {item.name}
               </span>
               <span
-                className={`text-[11px] ${pathName === `/meals?category=${item.slug}` ? "text-white/70" : "text-fh-green-light"}`}
+                className={`text-[11px] ${category === item.id ? "text-white/70" : "text-fh-green-light"}`}
               >
                 {item.mealCount}+ items
               </span>
