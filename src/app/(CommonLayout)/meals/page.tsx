@@ -17,7 +17,8 @@ export default async function MealsPage({searchParams}: {searchParams: TSearchPa
     page: query.page,
     limit: query.limit,
     sortBy: query.sortBy,
-    sortOrder: query.sortOrder
+    sortOrder: query.sortOrder,
+    category: query.category
   });
   const { meals } = data;
   const { pagination } = data;

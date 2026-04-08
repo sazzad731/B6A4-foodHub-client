@@ -7,6 +7,7 @@ interface AllMealsParams {
   limit?: string | undefined;
   sortBy?: string | undefined;
   sortOrder?: string | undefined;
+  category?: string | undefined;
 }
 export const getAllMeals = async (params: AllMealsParams) => {
   try {
