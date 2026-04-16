@@ -1,10 +1,10 @@
 "use client";
 import { useSearchParams} from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getAllCategory } from "@/services/category";
 import { toast } from "sonner";
+import { useNavigate } from "@/hooks/useNavigate";
 
 
 interface TCategories {
@@ -20,6 +20,7 @@ interface TCategories {
 export default function Categories() {
   const [categories, setCategories] = useState<TCategories[]>([]);
   const searchParams = useSearchParams();
+  const { navigateToPage } = useNavigate();
 
   const category = searchParams.get("category")
 
@@ -56,9 +57,9 @@ export default function Categories() {
         </div>
         <div className="flex gap-3.5 overflow-x-auto py-2 scrollbar-hide">
           {categories.map((item) => (
-            <Link
+            <button
               key={item.id}
-              href={`/meals?category=${item.id}`}
+              onClick={()=> navigateToPage("category", item.id)}
               className={`shrink-0 w-40 rounded-2xl border-[1.5px] px-3 pt-5 pb-4 flex flex-col items-center gap-3 cursor-pointer transition-all duration-200
               ${
                 category === item.id
@@ -85,7 +86,7 @@ export default function Categories() {
               >
                 {item.mealCount}+ items
               </span>
-            </Link>
+            </button>
           ))}
         </div>
       </div>

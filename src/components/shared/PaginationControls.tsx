@@ -8,6 +8,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "@/hooks/useNavigate";
 
 
 interface PaginationProps {
@@ -21,19 +22,7 @@ interface PaginationProps {
 
 export function PaginationControls({meta}: PaginationProps = {meta:{total: 0, page: 1, limit: 10, totalPage: 1}}) {
   const { total, page, limit, totalPage } = meta;
-  const queryString = useSearchParams();
-  const router = useRouter()
-
-  const navigateToPage = (page: number) => {
-    const params = new URLSearchParams(queryString.toString());
-    params.set("page", page.toString());
-    router.push(`?${params.toString()}`, { scroll: false });
-
-    window.scrollTo({
-      top: 500,
-      behavior: "smooth",
-    });
-  }
+  const {navigateToPage} = useNavigate()
 
   let startPage = Math.max(1, page - 1);
   let endPage = Math.min(totalPage, startPage + 2);
@@ -50,9 +39,9 @@ export function PaginationControls({meta}: PaginationProps = {meta:{total: 0, pa
   return (
     <Pagination className="mt-10">
       <PaginationContent className="bg-fh-cream-dark rounded-md p-1.5">
-        <PaginationItem>
+        <PaginationItem className="sm:block hidden">
           <Button
-            onClick={() => navigateToPage(page - 1)}
+            onClick={() => navigateToPage("page", page - 1)}
             variant="ghost"
             disabled={page === 1}
             className="hover:bg-fh-green-light hover:text-fh-green-mid cursor-pointer"
@@ -65,7 +54,7 @@ export function PaginationControls({meta}: PaginationProps = {meta:{total: 0, pa
           <PaginationItem key={pageNumber}>
             <Button
               variant="ghost"
-              onClick={() => navigateToPage(pageNumber)}
+              onClick={() => navigateToPage("page", pageNumber)}
               className={`hover:bg-fh-green-light hover:text-fh-green-mid bg-fh-cream-mid ${
                 pageNumber === page ? "bg-fh-green-light text-fh-green-mid" : ""
               } cursor-pointer`}
@@ -85,7 +74,7 @@ export function PaginationControls({meta}: PaginationProps = {meta:{total: 0, pa
             <PaginationItem>
               <Button
                 variant="ghost"
-                onClick={() => navigateToPage(totalPage)}
+                onClick={() => navigateToPage("page", totalPage)}
                 className="hover:bg-fh-green-light hover:text-fh-green-mid bg-fh-cream-mid cursor-pointer"
               >
                 {totalPage}
@@ -94,9 +83,9 @@ export function PaginationControls({meta}: PaginationProps = {meta:{total: 0, pa
           </>
         )}
 
-        <PaginationItem>
+        <PaginationItem className="hidden sm:block">
           <Button
-            onClick={() => navigateToPage(page + 1)}
+            onClick={() => navigateToPage("page", page + 1)}
             disabled={page === totalPage}
             variant="ghost"
             className="hover:bg-fh-green-light hover:text-fh-green-mid cursor-pointer"
