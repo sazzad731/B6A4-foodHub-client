@@ -59,7 +59,7 @@ export default function Categories() {
           {categories.map((item) => (
             <button
               key={item.id}
-              onClick={()=> navigateToPage("category", item.id)}
+              onClick={() => navigateToPage("category", item.id)}
               className={`shrink-0 w-40 rounded-2xl border-[1.5px] px-3 pt-5 pb-4 flex flex-col items-center gap-3 cursor-pointer transition-all duration-200
               ${
                 category === item.id
@@ -73,6 +73,7 @@ export default function Categories() {
                   alt={item.slug}
                   fill
                   className="rounded-full object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
 

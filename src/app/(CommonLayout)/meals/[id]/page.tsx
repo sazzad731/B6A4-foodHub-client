@@ -20,6 +20,7 @@ export default async function MealDetail({ params }: {params: Promise<{id: strin
               alt={meal.title}
               fill
               className="object-cover rounded-2xl"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
 
@@ -197,11 +198,14 @@ export default async function MealDetail({ params }: {params: Promise<{id: strin
                         {review.customer.name}
                       </p>
                       <p className="text-[11px] text-fh-green-light">
-                        {new Date(review.createdAt).toLocaleDateString("en-GB", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {new Date(review.createdAt).toLocaleDateString(
+                          "en-GB",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          },
+                        )}
                       </p>
                     </div>
                   </div>

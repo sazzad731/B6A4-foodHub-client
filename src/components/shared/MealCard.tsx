@@ -71,6 +71,7 @@ export default function MealCard({meal, badgeColor}: {meal: TMeal, badgeColor: s
           alt="Event cover"
           fill
           className="relative z-20 w-full object-cover rounded-t-xl"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
       <CardHeader>

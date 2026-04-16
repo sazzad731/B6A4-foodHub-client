@@ -128,6 +128,7 @@ export default function Hero() {
                   alt={card.name}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
               <div className="p-3.5 pb-4">
