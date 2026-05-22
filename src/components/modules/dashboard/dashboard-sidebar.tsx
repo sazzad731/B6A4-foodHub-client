@@ -20,9 +20,13 @@ import { providerRoute } from "@/routes/provider.routes";
 import { customerRoute } from "@/routes/customer.routes";
 import { ROLES } from "@/constants/roles";
 import { usePathname } from "next/navigation"
+import { cn } from "@/lib/utils"
 
 
-export function DashboardSidebar({user, ...props }: {user: {role: string} & React.ComponentProps<typeof Sidebar>}) {
+export function DashboardSidebar({
+  user,
+  ...props
+}: { user: { role?: string | null } } & React.ComponentProps<typeof Sidebar>) {
   const pathName = usePathname();
   let routes: Route[] = [];
 
@@ -56,7 +60,15 @@ export function DashboardSidebar({user, ...props }: {user: {role: string} & Reac
           <SidebarMenu>
             {routes.map((item) => (
               <SidebarMenuItem key={item.title} className="mb-3 mx-3">
-                <SidebarMenuButton className={`${pathName === item.url ? "" : "bg-secondary"} cursor-pointer font-medium`}>
+                <SidebarMenuButton
+                  className={cn(
+                    "cursor-pointer font-medium",
+                    pathName === item.url ||
+                      (item.url !== "/dashboard" && pathName.startsWith(item.url))
+                      ? "bg-fh-coral text-white hover:bg-fh-coral-hover hover:text-white"
+                      : "bg-secondary text-fh-green-muted hover:text-fh-green-deep",
+                  )}
+                >
                   <Link href={item.url} className="w-full">{item.title}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

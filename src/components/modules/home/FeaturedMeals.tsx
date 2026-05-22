@@ -6,7 +6,6 @@ import { TMeal } from "@/types";
 export default async function FeaturedMeals() {
   const {data: meals} = await getFeaturedMeals();
 
-
   const badgeColors = [
     "bg-blue-100 text-blue-700",
     "bg-green-100 text-green-700",

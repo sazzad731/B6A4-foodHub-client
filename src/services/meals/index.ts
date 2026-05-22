@@ -1,50 +1,209 @@
-"use server"
+"use server";
 
-interface AllMealsParams {
-  search?: string | undefined;
-  price_range?: string | undefined;
-  page?: string | undefined;
-  limit?: string | undefined;
-  sortBy?: string | undefined;
-  sortOrder?: string | undefined;
-  category?: string | undefined;
-}
-export const getAllMeals = async (params: AllMealsParams) => {
-  try {
-    const url = new URL(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/meals`);
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
-          url.searchParams.append(key, value)
-        }
-      })
+import { revalidatePath } from "next/cache";
+import { apiFetch } from "@/services/api";
+import { TApiResponse, TMeal, TPagination, TReview } from "@/types";
+
+type AllMealsParams = {
+  search?: string;
+  price_range?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  page?: string;
+  limit?: string;
+  sortBy?: string;
+  sortOrder?: string;
+  category?: string;
+  dietaryPreference?: string;
+  isVegan?: string;
+};
+
+type MealsPayload = {
+  meals: TMeal[];
+  pagination: TPagination;
+};
+
+const emptyMeals: MealsPayload = {
+  meals: [],
+  pagination: {
+    total: 0,
+    page: 1,
+    limit: 9,
+    totalPage: 0,
+  },
+};
+
+const buildQuery = (params?: Record<string, string | undefined>) => {
+  const query = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      query.set(key, value);
     }
-    const res = await fetch(url.toString(), { cache: "no-cache" })
-    return res.json();
+  });
+
+  return query.toString();
+};
+
+export const getAllMeals = async (params?: AllMealsParams) => {
+  try {
+    const query = buildQuery(params);
+
+    return await apiFetch<TApiResponse<MealsPayload>>(
+      `/api/v1/meals${query ? `?${query}` : ""}`,
+      { cache: "no-store" },
+    );
   } catch (error) {
-    console.log(error)
+    return {
+      success: false,
+      message: "Unable to load meals",
+      data: emptyMeals,
+      error,
+    };
   }
-}
-
-
+};
 
 export const getFeaturedMeals = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/meals/featured`, {cache: "no-cache"});
-    return res.json();
+    return await apiFetch<TApiResponse<TMeal[]>>("/api/v1/meals/featured", {
+      cache: "no-store",
+    });
   } catch (error) {
-    console.log(error)
+    return {
+      success: false,
+      message: "Unable to load featured meals",
+      data: [],
+      error,
+    };
   }
-}
-
-
-
+};
 
 export const getMealDetail = async (id: string) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/meals/${id}`, {cache: "no-cache"})
-    return res.json()
+    return await apiFetch<TApiResponse<TMeal>>(`/api/v1/meals/${id}`, {
+      cache: "no-store",
+    });
   } catch (error) {
-    console.log(error)
+    return {
+      success: false,
+      message: "Unable to load meal details",
+      data: null,
+      error,
+    };
   }
-}
+};
+
+export const getMealReviews = async (id: string) => {
+  try {
+    return await apiFetch<TApiResponse<{ meal: Pick<TMeal, "id" | "title">; reviews: TReview[] }>>(
+      `/api/v1/meals/${id}/reviews`,
+      { cache: "no-store" },
+    );
+  } catch (error) {
+    return {
+      success: false,
+      message: "Unable to load reviews",
+      data: { meal: { id, title: "" }, reviews: [] },
+      error,
+    };
+  }
+};
+
+export const addMealToMenu = async (payload: Record<string, unknown>) => {
+  try {
+    const result = await apiFetch<TApiResponse<TMeal>>("/api/v1/meals/provider", {
+      method: "POST",
+      auth: true,
+      body: JSON.stringify(payload),
+    });
+
+    revalidatePath("/dashboard/menu");
+    revalidatePath("/meals");
+
+    return result;
+  } catch (error) {
+    return {
+      success: false,
+      message: "Unable to add meal",
+      data: null,
+      error,
+    };
+  }
+};
+
+export const updateMeal = async (id: string, payload: Record<string, unknown>) => {
+  try {
+    const result = await apiFetch<TApiResponse<TMeal>>(
+      `/api/v1/meals/provider/${id}`,
+      {
+        method: "PUT",
+        auth: true,
+        body: JSON.stringify(payload),
+      },
+    );
+
+    revalidatePath("/dashboard/menu");
+    revalidatePath(`/meals/${id}`);
+
+    return result;
+  } catch (error) {
+    return {
+      success: false,
+      message: "Unable to update meal",
+      data: null,
+      error,
+    };
+  }
+};
+
+export const deleteMeal = async (id: string) => {
+  try {
+    const result = await apiFetch<TApiResponse<TMeal>>(
+      `/api/v1/meals/provider/${id}`,
+      {
+        method: "DELETE",
+        auth: true,
+      },
+    );
+
+    revalidatePath("/dashboard/menu");
+    revalidatePath("/meals");
+
+    return result;
+  } catch (error) {
+    return {
+      success: false,
+      message: "Unable to delete meal",
+      data: null,
+      error,
+    };
+  }
+};
+
+export const addMealReview = async (
+  id: string,
+  payload: { rating: number; comment: string },
+) => {
+  try {
+    const result = await apiFetch<TApiResponse<TReview>>(
+      `/api/v1/meals/${id}/reviews`,
+      {
+        method: "POST",
+        auth: true,
+        body: JSON.stringify(payload),
+      },
+    );
+
+    revalidatePath(`/meals/${id}`);
+    revalidatePath("/dashboard/orders");
+
+    return result;
+  } catch (error) {
+    return {
+      success: false,
+      message: "Unable to submit review",
+      data: null,
+      error,
+    };
+  }
+};

@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Search, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +16,6 @@ import { useNavigate } from "@/hooks/useNavigate";
 export default function SearchBar() {
   const [query, setQuery] = useState("");
   const { navigateToPage } = useNavigate();
-  const router = useRouter();
   return (
     <div className="bg-fh-cream relative">
       <div className="container mx-auto px-4 lg:px-0 absolute sm:-top-9 -top-14 inset-x-0">

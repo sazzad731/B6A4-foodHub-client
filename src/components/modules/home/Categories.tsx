@@ -1,91 +1,95 @@
 "use client";
-import { useSearchParams} from "next/navigation";
-import Image from "next/image";
+
 import { useEffect, useState } from "react";
-import { getAllCategory } from "@/services/category";
+import Image from "next/image";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useNavigate } from "@/hooks/useNavigate";
+import { getAllCategory } from "@/services/category";
+import { TCategory } from "@/types";
 
-
-interface TCategories {
-  id: string;
-  name: string;
-  slug: string;
-  image: string;
-  mealCount: number;
-  sortOrder: number;
-  createdAt: Date;
-  updatedAt: Date
-}
 export default function Categories() {
-  const [categories, setCategories] = useState<TCategories[]>([]);
+  const [categories, setCategories] = useState<TCategory[]>([]);
   const searchParams = useSearchParams();
   const { navigateToPage } = useNavigate();
-
-  const category = searchParams.get("category")
+  const category = searchParams.get("category");
 
   useEffect(() => {
     const allCategories = async () => {
       try {
         const categoryData = await getAllCategory();
-        setCategories(categoryData.data)
-      } catch (error: any) {
-        toast.error(error.message)
+        setCategories(categoryData.data);
+      } catch (error: unknown) {
+        toast.error(
+          error instanceof Error ? error.message : "Unable to load categories",
+        );
       }
-    }
+    };
+
     allCategories();
-  }, [])
+  }, []);
+
   return (
     <section className="bg-fh-cream">
-      <div className="container mx-auto px-4 lg:px-0 sm:py-30 pt-45 pb-20">
-        <div className="flex justify-between mb-10 sm:flex-row flex-col">
+      <div className="container mx-auto px-4 pb-20 pt-45 sm:py-30 lg:px-0">
+        <div className="mb-10 flex flex-col justify-between sm:flex-row">
           <div>
-            <span className="block text-xs font-bold tracking-[2px] uppercase text-fh-coral mb-2.5">
+            <span className="mb-2.5 block text-xs font-bold uppercase tracking-[2px] text-fh-coral">
               Explore by Cuisine
             </span>
-            <h2 className="font-display text-[clamp(28px,3.5vw,44px)] font-bold tracking-tight leading-tight">
+            <h2 className="font-display text-[clamp(28px,3.5vw,44px)] font-bold leading-tight tracking-tight">
               What are you{" "}
-              <em className="font-light text-fh-green-muted">craving today?</em>
+              <em className="font-light text-fh-green-muted">
+                craving today?
+              </em>
             </h2>
           </div>
-          <a
+          <Link
             href="/meals"
-            className="text-sm font-semibold text-fh-coral hover:gap-2 sm:mt-0 mt-10 flex items-center gap-1 transition-all"
+            className="mt-10 flex items-center gap-1 text-sm font-semibold text-fh-coral transition-all hover:gap-2 sm:mt-0"
           >
-            All cuisines →
-          </a>
+            All cuisines
+          </Link>
         </div>
-        <div className="flex gap-3.5 overflow-x-auto py-2 scrollbar-hide">
+        <div className="scrollbar-hide flex gap-3.5 overflow-x-auto py-2">
           {categories.map((item) => (
             <button
               key={item.id}
               onClick={() => navigateToPage("category", item.id)}
-              className={`shrink-0 w-40 rounded-2xl border-[1.5px] px-3 pt-5 pb-4 flex flex-col items-center gap-3 cursor-pointer transition-all duration-200
-              ${
+              className={`flex w-40 shrink-0 cursor-pointer flex-col items-center gap-3 rounded-2xl border-[1.5px] px-3 pb-4 pt-5 transition-all duration-200 ${
                 category === item.id
-                  ? "bg-fh-coral border-fh-coral text-white shadow-lg shadow-fh-coral/30 -translate-y-1"
-                  : "bg-white border-fh-cream-dark hover:border-fh-coral hover:bg-fh-coral/5 hover:-translate-y-1 hover:shadow-lg"
+                  ? "border-fh-coral bg-fh-coral text-white shadow-lg shadow-fh-coral/30 -translate-y-1"
+                  : "border-fh-cream-dark bg-white hover:-translate-y-1 hover:border-fh-coral hover:bg-fh-coral/5 hover:shadow-lg"
               }`}
             >
-              <div className="relative h-20 w-20">
-                <Image
-                  src={item.image}
-                  alt={item.slug}
-                  fill
-                  className="rounded-full object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
+              <div className="relative h-20 w-20 flex items-center justify-center bg-fh-cream-dark rounded-full">
+                {item.image && (item.image.startsWith("http://") || item.image.startsWith("https://") || item.image.startsWith("/")) ? (
+                  <Image
+                    src={item.image}
+                    alt={item.slug}
+                    fill
+                    className="rounded-full object-cover"
+                    sizes="80px"
+                  />
+                ) : (
+                  <span className="text-3xl">{item.image}</span>
+                )}
               </div>
 
               <span
-                className={`text-[13px] font-semibold ${category === item.id ? "text-white" : "text-fh-green-deep"}`}
+                className={`text-[13px] font-semibold ${
+                  category === item.id ? "text-white" : "text-fh-green-deep"
+                }`}
               >
                 {item.name}
               </span>
               <span
-                className={`text-[11px] ${category === item.id ? "text-white/70" : "text-fh-green-light"}`}
+                className={`text-[11px] ${
+                  category === item.id ? "text-white/70" : "text-fh-green-light"
+                }`}
               >
-                {item.mealCount}+ items
+                {item.mealCount || 0}+ items
               </span>
             </button>
           ))}

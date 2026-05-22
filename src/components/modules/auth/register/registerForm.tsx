@@ -80,18 +80,13 @@ export default function RegisterForm() {
           toast.success("Registration success. Please login", { id: toastId });
           setLoading(false)
           router.push("/login");
-        } else if (!result.success) {
+        } else {
           setLoading(false)
           toast.error(result.message, {id: toastId})
-        } else if (!result.success && result.error.code === "P2002") {
-          setLoading(false)
-          toast.error("User already exist or " + result.message, {
-            id: toastId,
-          });
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         setLoading(false)
-        toast.error(error.message, { id: toastId });
+        toast.error(error instanceof Error ? error.message : "Registration failed", { id: toastId });
       }
     },
   });

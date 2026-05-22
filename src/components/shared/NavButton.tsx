@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ModeToggle } from "./ModeToggle";
 import ShoppingCartBtn from "./ShoppingCartBtn";
+import { TDecodedUser } from "@/types";
 
 interface ButtonProps {
-  user: any;
+  user: TDecodedUser | null;
   handleLogOut: () => void;
-  auth: any;
+  auth: {
+    login: { title: string; url: string };
+    signup: { title: string; url: string };
+    logout: { title: string };
+  };
 }
 
 export default function NavButton({ user, handleLogOut, auth }: ButtonProps) {
@@ -16,7 +20,11 @@ export default function NavButton({ user, handleLogOut, auth }: ButtonProps) {
         <div className="hidden lg:block">
           <ShoppingCartBtn />
         </div>
-        <Button size="sm" onClick={handleLogOut} className="bg-fh-coral cursor-pointer">
+        <Button
+          size="sm"
+          onClick={handleLogOut}
+          className="cursor-pointer bg-fh-coral"
+        >
           {auth.logout.title}
         </Button>
       </div>
@@ -24,8 +32,12 @@ export default function NavButton({ user, handleLogOut, auth }: ButtonProps) {
   }
 
   return (
-    <div className="flex lg:flex-row flex-col items-center gap-2">
-      <Button asChild variant="outline" className="font-medium text-fh-green-muted rounded-lg hover:text-fh-green-deep hover:bg-black/5 transition-colors">
+    <div className="flex flex-col items-center gap-2 lg:flex-row">
+      <Button
+        asChild
+        variant="outline"
+        className="rounded-lg font-medium text-fh-green-muted transition-colors hover:bg-black/5 hover:text-fh-green-deep"
+      >
         <Link href={auth.login.url}>{auth.login.title}</Link>
       </Button>
       <Button asChild className="bg-fh-coral">
@@ -33,4 +45,4 @@ export default function NavButton({ user, handleLogOut, auth }: ButtonProps) {
       </Button>
     </div>
   );
-};
+}

@@ -31,6 +31,7 @@ import { toast } from "sonner";
 import Logo from "./Logo";
 import NavButton from "./NavButton";
 import ShoppingCartBtn from "./ShoppingCartBtn";
+import { TDecodedUser } from "@/types";
 
 interface MenuItem {
   title: string;
@@ -62,9 +63,8 @@ const Navbar = ({
     signup: { title: "Register", url: "/register" },
     logout: { title: "Logout" },
   },
-  className,
 }: NavbarProps) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<TDecodedUser | null>(null);
   const [loading, setLoading] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -97,7 +97,6 @@ const Navbar = ({
   const menu = [
     { title: "Meals", url: "/meals" },
     { title: "Restaurants", url: "/providers" },
-    { title: "Blog", url: "#" },
   ];
 
   if (user) {

@@ -36,9 +36,7 @@ export default function AddMenuForm() {
     validators: {
       onSubmit: formSchema,
     },
-    onSubmit: async({ value }) => {
-      console.log(value)
-    }
+    onSubmit: async() => {}
   });
   return (
     <Dialog>

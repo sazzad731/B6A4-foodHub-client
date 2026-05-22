@@ -1,5 +1,10 @@
-"use client"
-import { Badge } from "@/components/ui/badge"
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { Clock3, ShoppingCart, Star } from "lucide-react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardAction,
@@ -8,18 +13,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
-import {TMeal} from "@/types/index"
-import { Clock3, ShoppingCart, Star } from "lucide-react";
-import { toast } from "sonner";
-import { useEffect, useState } from "react";
 import { getUser } from "@/services/auth";
+import { addMealToCart } from "@/lib/cart";
+import { formatCurrency } from "@/lib/format";
+import { TDecodedUser, TMeal } from "@/types";
 
-
-export default function MealCard({meal, badgeColor}: {meal: TMeal, badgeColor: string}) {
-  const [user, setUser] = useState(null);
+export default function MealCard({
+  meal,
+  badgeColor,
+}: {
+  meal: TMeal;
+  badgeColor: string;
+}) {
+  const [user, setUser] = useState<TDecodedUser | null>(null);
   const {
-    id,
     provider,
     category,
     title,
@@ -29,80 +36,77 @@ export default function MealCard({meal, badgeColor}: {meal: TMeal, badgeColor: s
     tags,
     prepTime,
   } = meal;
-  
+
 
   useEffect(() => {
-      const getCurrentUser = async () => {
-        try {
-          const userdata = await getUser();
-          setUser(userdata);
-        } catch (error) {
-          console.error("Failed to get user:", error);
-        }
-      };
-      getCurrentUser();
-    }, []);
+    const getCurrentUser = async () => {
+      try {
+        const userData = await getUser();
+        setUser(userData);
+      } catch (error) {
+        console.error("Failed to get user:", error);
+      }
+    };
 
-  const handleAddToCard = (mealId: string)=>{
-    const existingCart: string[] = JSON.parse(localStorage.getItem("cart") || "[]");
+    getCurrentUser();
+  }, []);
 
+  const handleAddToCart = () => {
     if (!user) {
-      toast.error("Please login first")
+      toast.error("Please login first");
       return;
     }
 
-    if (existingCart.includes(mealId)) {
-      toast.warning("Meal already added")
-      return
+    const result = addMealToCart(meal);
+
+    if (result.ok) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
     }
-
-    const updatedCart = [...existingCart, id];
-
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-
-    toast.success("Meal added to cart")
-  }
+  };
 
   return (
     <Card className="relative mx-auto w-full max-w-lg pt-0">
       <div className="relative h-60">
         <Image
           src={image}
-          alt="Event cover"
+          alt={title}
           fill
-          className="relative z-20 w-full object-cover rounded-t-xl"
+          className="relative z-20 w-full rounded-t-xl object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
       <CardHeader>
         <CardAction>
-          <Badge className={`${badgeColor} uppercase`}>{tags[0]}</Badge>
+          <Badge className={`${badgeColor} uppercase`}>
+            {tags?.[0] || "Fresh"}
+          </Badge>
         </CardAction>
-        <p className="text-[11px] font-bold text-fh-green-muted tracking-[1.5px] uppercase">
-          {category.name}
+        <p className="text-[11px] font-bold uppercase tracking-[1.5px] text-fh-green-muted">
+          {category?.name || "Meal"}
         </p>
-        <CardTitle className="font-display text-[19px] font-bold text-fh-green-deep tracking-tight">
-          {title.length > 15 ? title.slice(0, 15) + " ..." : title}
+        <CardTitle className="font-display text-[19px] font-bold tracking-tight text-fh-green-deep">
+          {title.length > 24 ? `${title.slice(0, 24)}...` : title}
         </CardTitle>
         <CardDescription>
           <div className="flex items-center gap-2">
-            <div className="relative w-5 h-5 rounded-full bg-fh-green-soft flex items-center justify-center text-[10px] font-bold text-white">
-              {provider.restaurantName[0]}
-              {/* <Image src={provider.image} alt={provider.restaurantName} fill className="object-cover rounded-full"/> */}
+            <div className="relative flex h-5 w-5 items-center justify-center rounded-full bg-fh-green-soft text-[10px] font-bold text-white">
+              {provider?.restaurantName?.[0] || "F"}
             </div>
             <span className="text-sm text-fh-green-muted">
-              {provider.restaurantName}
+              {provider?.restaurantName || "FoodHub"}
             </span>
           </div>
-          <span className="flex items-center gap-1 text-sm font-semibold text-fh-green-deep mt-3">
+          <span className="mt-3 flex items-center gap-1 text-sm font-semibold text-fh-green-deep">
             <Star className="h-3.5 w-3.5 fill-fh-amber text-fh-amber" />
-            {avgRating}
+            {avgRating || 0}
           </span>
         </CardDescription>
       </CardHeader>
-      <CardFooter className="flex justify-between items-center border-t border-fh-cream-dark">
+      <CardFooter className="flex items-center justify-between border-t border-fh-cream-dark">
         <span className="font-display text-xl font-bold text-fh-coral">
-          ৳{price}{" "}
+          {formatCurrency(price)}{" "}
           <span className="font-sans text-sm font-medium text-fh-green-muted">
             / item
           </span>
@@ -113,11 +117,11 @@ export default function MealCard({meal, badgeColor}: {meal: TMeal, badgeColor: s
             {prepTime}m
           </span>
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              handleAddToCard(id);
+            onClick={(event) => {
+              event.preventDefault();
+              handleAddToCart();
             }}
-            className="w-9 h-9 rounded-full bg-fh-coral hover:bg-fh-coral-hover flex items-center justify-center text-white transition-all hover:scale-105 shadow-md shadow-fh-coral/30 cursor-pointer"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-fh-coral text-white shadow-md shadow-fh-coral/30 transition-all hover:scale-105 hover:bg-fh-coral-hover"
           >
             <ShoppingCart className="h-5 w-5" />
           </button>

@@ -1,77 +1,117 @@
-"use server"
+"use server";
+
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form";
+import { apiFetch } from "@/services/api";
+import { TApiResponse, TDecodedUser, TUser } from "@/types";
 
-export interface TUser {
-  role: string
-  name: string
-  email: string
-  password: string
-}
+export type TRegisterPayload = {
+  role: string;
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+  address?: string;
+  image?: string;
+  restaurantName?: string;
+  description?: string;
+  deliveryFee?: number | string;
+  cuisineTypes?: string[] | string;
+};
 
-export const registerUser = async (userData: TUser) => {
+type TLoginResponse = {
+  token: string;
+  user: TUser;
+};
+
+export const registerUser = async (userData: TRegisterPayload) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(userData)
+    return await apiFetch<TApiResponse<TUser>>("/api/v1/auth/register", {
+      method: "POST",
+      body: JSON.stringify(userData),
     });
-    const result = await res.json();
-    return result;
   } catch (error) {
-    console.log(error)
-    return {error}
+    return {
+      success: false,
+      message: "Registration failed",
+      data: null,
+      error,
+    };
   }
-}
-
-
+};
 
 export const loginUser = async (userData: FieldValues) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const result = await apiFetch<TApiResponse<TLoginResponse>>(
+      "/api/v1/auth/login",
+      {
+        method: "POST",
+        body: JSON.stringify(userData),
       },
-      body: JSON.stringify(userData),
-      credentials: "include"
-    });
-    const result = await res.json()
-    const storeCookie = await cookies()
-    if (result.success) {
-    storeCookie.set("token", result.data.token)
-  }
-    return result
+    );
+
+    if (result.success && result.data?.token) {
+      (await cookies()).set("token", result.data.token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 7 * 24 * 60 * 60,
+        path: "/",
+      });
+    }
+
+    return result;
   } catch (error) {
-    console.log(error)
+    return {
+      success: false,
+      message: "Login failed",
+      data: null,
+      error,
+    };
   }
-}
-
-
+};
 
 export const getUser = async () => {
   const storeCookie = await cookies();
-  const currentTime = Date.now() / 1000;
-  const token = storeCookie.get("token")?.value
-  let decoded = null;
-  if (token) {
-    decoded = await jwtDecode(token);
-    if (decoded.exp < currentTime) {
-      storeCookie.delete("token");
-      decoded = null;
-      return null
-    }
-    return decoded;
-  } else {
-    return null
-  }
-}
+  const token = storeCookie.get("token")?.value;
 
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const decoded = jwtDecode<TDecodedUser>(token);
+    const currentTime = Date.now() / 1000;
+
+    if (decoded.exp && decoded.exp < currentTime) {
+      storeCookie.delete("token");
+      return null;
+    }
+
+    return decoded;
+  } catch {
+    storeCookie.delete("token");
+    return null;
+  }
+};
+
+export const getCurrentUser = async () => {
+  try {
+    return await apiFetch<TApiResponse<TUser>>("/api/v1/auth/me", {
+      auth: true,
+      cache: "no-store",
+    });
+  } catch (error) {
+    return {
+      success: false,
+      message: "Unable to load current user",
+      data: null,
+      error,
+    };
+  }
+};
 
 export const userLogOut = async () => {
-  const storeCookie = await cookies();
-  storeCookie.delete("token");
-}
+  (await cookies()).delete("token");
+};

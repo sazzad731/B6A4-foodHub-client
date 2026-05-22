@@ -57,7 +57,7 @@ export default async function MealsPage({searchParams}: {searchParams: TSearchPa
           </div>
           <PriceRange />
         </div>
-        <Suspense key={JSON.stringify(searchParams)} fallback={<div className="flex items-center justify-center h-125"><Spinner className="size-8"/></div>}>
+        <Suspense key={JSON.stringify(query)} fallback={<div className="flex items-center justify-center h-125"><Spinner className="size-8"/></div>}>
         {meals.length === 0 ? (
           <p className='text-center'>No items found</p>
         ) : (

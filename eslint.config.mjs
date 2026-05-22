@@ -16,7 +16,7 @@ const eslintConfig = defineConfig([
 
   {
     rules: {
-      "react/no-children-prop": [true, {allowFunctions: true}]
+      "react/no-children-prop": "off",
     }
   }
 ]);

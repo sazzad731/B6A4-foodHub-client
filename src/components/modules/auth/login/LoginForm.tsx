@@ -7,11 +7,12 @@ import { Card } from "@/components/ui/card";
 import { useForm } from "@tanstack/react-form";
 import { Field, FieldError, FieldGroup, FieldLabel, } from "@/components/ui/field";
 import * as z from "zod"
-import { loginUser } from "@/services/auth";
+import { getCurrentUser, loginUser } from "@/services/auth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { ROLES } from "@/constants/roles";
 
 const formSchema = z
   .object({
@@ -33,21 +34,31 @@ export default function RegisterForm() {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      const toastId = toast.loading("Creating user");
+      const toastId = toast.loading("Logging in...");
       try {
         setLoading(true)
         const result = await loginUser(value);
         if (result.success) {
-          toast.success("Login success. redirecting!", { id: toastId });
-          setLoading(false)
-          router.push("/dashboard");
+          // Get current user to determine role-based redirect
+          const { data: user } = await getCurrentUser();
+          toast.success("Login success!", { id: toastId });
+          setLoading(false);
+
+          // Role-based redirect
+          if (user?.role === ROLES.ADMIN) {
+            router.push("/dashboard");
+          } else if (user?.role === ROLES.PROVIDER) {
+            router.push("/dashboard");
+          } else {
+            router.push("/dashboard");
+          }
         } else if (!result.success) {
           setLoading(false)
           toast.error(result.message, {id: toastId})
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         setLoading(false)
-        toast.error(error.message, { id: toastId });
+        toast.error(error instanceof Error ? error.message : "Login failed", { id: toastId });
       }
     },
   });

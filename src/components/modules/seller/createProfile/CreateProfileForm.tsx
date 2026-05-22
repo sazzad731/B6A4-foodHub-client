@@ -27,8 +27,8 @@ export default function CreateProfileForm() {
     validators: {
       onSubmit: profileSchema,
     },
-    onSubmit: async ({ value }) => {
-      const toastId = toast.loading("Profile creating")
+    onSubmit: async () => {
+      toast.success("Profile form submitted")
     },
   });
   return (

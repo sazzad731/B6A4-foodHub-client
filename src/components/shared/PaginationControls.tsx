@@ -5,7 +5,6 @@ import {
   PaginationEllipsis,
   PaginationItem,
 } from "@/components/ui/pagination";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "@/hooks/useNavigate";
@@ -21,11 +20,11 @@ interface PaginationProps {
 }
 
 export function PaginationControls({meta}: PaginationProps = {meta:{total: 0, page: 1, limit: 10, totalPage: 1}}) {
-  const { total, page, limit, totalPage } = meta;
+  const { page, totalPage } = meta;
   const {navigateToPage} = useNavigate()
 
   let startPage = Math.max(1, page - 1);
-  let endPage = Math.min(totalPage, startPage + 2);
+  const endPage = Math.min(totalPage, startPage + 2);
 
   if (endPage - startPage < 2 && totalPage > 2) {
     startPage = Math.max(1, endPage - 2);
