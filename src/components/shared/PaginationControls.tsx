@@ -11,7 +11,7 @@ import { useNavigate } from "@/hooks/useNavigate";
 
 
 interface PaginationProps {
-  meta: {
+  meta?: {
     total: number;
     page: number;
     limit: number;
@@ -19,7 +19,9 @@ interface PaginationProps {
   }
 }
 
-export function PaginationControls({meta}: PaginationProps = {meta:{total: 0, page: 1, limit: 10, totalPage: 1}}) {
+const defaultMeta = {total: 0, page: 1, limit: 10, totalPage: 1};
+
+export function PaginationControls({meta = defaultMeta}: PaginationProps = {}) {
   const { page, totalPage } = meta;
   const {navigateToPage} = useNavigate()
 

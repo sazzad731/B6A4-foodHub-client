@@ -2,14 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { apiFetch } from "@/services/api";
+import { withFallbackData } from "@/services/response";
 import { TApiResponse, TUser, TUserStatus } from "@/types";
 
 export const getAllUsers = async () => {
   try {
-    return await apiFetch<TApiResponse<TUser[]>>("/api/v1/admin/users", {
+    const result = await apiFetch<TApiResponse<TUser[]>>("/api/v1/admin/users", {
       auth: true,
       cache: "no-store",
     });
+
+    return withFallbackData(result, [], "Unable to load users");
   } catch (error) {
     return {
       success: false,
@@ -22,7 +25,7 @@ export const getAllUsers = async () => {
 
 export const updateUserStatus = async (id: string, status: TUserStatus) => {
   try {
-    const result = await apiFetch<TApiResponse<TUser>>(
+    const result = await apiFetch<TApiResponse<TUser | null>>(
       `/api/v1/admin/users/${id}`,
       {
         method: "PATCH",
@@ -33,7 +36,7 @@ export const updateUserStatus = async (id: string, status: TUserStatus) => {
 
     revalidatePath("/dashboard/users");
 
-    return result;
+    return withFallbackData(result, null, "Unable to update user");
   } catch (error) {
     return {
       success: false,
@@ -46,7 +49,7 @@ export const updateUserStatus = async (id: string, status: TUserStatus) => {
 
 export const updateOwnProfile = async (payload: Record<string, unknown>) => {
   try {
-    const result = await apiFetch<TApiResponse<TUser>>("/api/v1/users/me", {
+    const result = await apiFetch<TApiResponse<TUser | null>>("/api/v1/users/me", {
       method: "PATCH",
       auth: true,
       body: JSON.stringify(payload),
@@ -54,7 +57,7 @@ export const updateOwnProfile = async (payload: Record<string, unknown>) => {
 
     revalidatePath("/dashboard/profile");
 
-    return result;
+    return withFallbackData(result, null, "Unable to update profile");
   } catch (error) {
     return {
       success: false,

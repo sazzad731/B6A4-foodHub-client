@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form";
 import { apiFetch } from "@/services/api";
+import { withFallbackData } from "@/services/response";
 import { TApiResponse, TDecodedUser, TUser } from "@/types";
 
 export type TRegisterPayload = {
@@ -27,10 +28,12 @@ type TLoginResponse = {
 
 export const registerUser = async (userData: TRegisterPayload) => {
   try {
-    return await apiFetch<TApiResponse<TUser>>("/api/v1/auth/register", {
+    const result = await apiFetch<TApiResponse<TUser | null>>("/api/v1/auth/register", {
       method: "POST",
       body: JSON.stringify(userData),
     });
+
+    return withFallbackData(result, null, "Registration failed");
   } catch (error) {
     return {
       success: false,
@@ -43,7 +46,7 @@ export const registerUser = async (userData: TRegisterPayload) => {
 
 export const loginUser = async (userData: FieldValues) => {
   try {
-    const result = await apiFetch<TApiResponse<TLoginResponse>>(
+    const result = await apiFetch<TApiResponse<TLoginResponse | null>>(
       "/api/v1/auth/login",
       {
         method: "POST",
@@ -61,7 +64,7 @@ export const loginUser = async (userData: FieldValues) => {
       });
     }
 
-    return result;
+    return withFallbackData(result, null, "Login failed");
   } catch (error) {
     return {
       success: false,
@@ -98,10 +101,12 @@ export const getUser = async () => {
 
 export const getCurrentUser = async () => {
   try {
-    return await apiFetch<TApiResponse<TUser>>("/api/v1/auth/me", {
+    const result = await apiFetch<TApiResponse<TUser | null>>("/api/v1/auth/me", {
       auth: true,
       cache: "no-store",
     });
+
+    return withFallbackData(result, null, "Unable to load current user");
   } catch (error) {
     return {
       success: false,

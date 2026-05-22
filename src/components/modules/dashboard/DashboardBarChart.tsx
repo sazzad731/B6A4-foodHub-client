@@ -3,7 +3,7 @@ import { DashboardChartPoint } from "@/lib/dashboard";
 
 interface DashboardBarChartProps {
   title: string;
-  data: DashboardChartPoint[];
+  data?: DashboardChartPoint[];
   badge?: string;
   subtitle?: string;
   valueLabel?: string;
@@ -13,7 +13,7 @@ interface DashboardBarChartProps {
 
 export default function DashboardBarChart({
   title,
-  data,
+  data = [],
   badge,
   subtitle,
   valueLabel = "orders",

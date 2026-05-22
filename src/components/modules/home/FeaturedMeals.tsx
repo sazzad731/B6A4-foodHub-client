@@ -4,7 +4,7 @@ import { getFeaturedMeals } from "@/services/meals";
 import { TMeal } from "@/types";
 
 export default async function FeaturedMeals() {
-  const {data: meals} = await getFeaturedMeals();
+  const {data: meals = []} = await getFeaturedMeals();
 
   const badgeColors = [
     "bg-blue-100 text-blue-700",
@@ -34,7 +34,7 @@ export default async function FeaturedMeals() {
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {meals?.map((meal: TMeal, index: number) => {
+          {meals.map((meal: TMeal, index: number) => {
             const randomColor = badgeColors[index % badgeColors.length];
             return (
             <Link href={`/meals/${meal.id}`} key={meal.id}>

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { apiFetch } from "@/services/api";
+import { withFallbackData } from "@/services/response";
 import { TApiResponse, TMeal, TPagination, TReview } from "@/types";
 
 type AllMealsParams = {
@@ -49,10 +50,12 @@ export const getAllMeals = async (params?: AllMealsParams) => {
   try {
     const query = buildQuery(params);
 
-    return await apiFetch<TApiResponse<MealsPayload>>(
+    const result = await apiFetch<TApiResponse<MealsPayload>>(
       `/api/v1/meals${query ? `?${query}` : ""}`,
       { cache: "no-store" },
     );
+
+    return withFallbackData(result, emptyMeals, "Unable to load meals");
   } catch (error) {
     return {
       success: false,
@@ -65,9 +68,11 @@ export const getAllMeals = async (params?: AllMealsParams) => {
 
 export const getFeaturedMeals = async () => {
   try {
-    return await apiFetch<TApiResponse<TMeal[]>>("/api/v1/meals/featured", {
+    const result = await apiFetch<TApiResponse<TMeal[]>>("/api/v1/meals/featured", {
       cache: "no-store",
     });
+
+    return withFallbackData(result, [], "Unable to load featured meals");
   } catch (error) {
     return {
       success: false,
@@ -80,9 +85,11 @@ export const getFeaturedMeals = async () => {
 
 export const getMealDetail = async (id: string) => {
   try {
-    return await apiFetch<TApiResponse<TMeal>>(`/api/v1/meals/${id}`, {
+    const result = await apiFetch<TApiResponse<TMeal | null>>(`/api/v1/meals/${id}`, {
       cache: "no-store",
     });
+
+    return withFallbackData(result, null, "Unable to load meal details");
   } catch (error) {
     return {
       success: false,
@@ -95,10 +102,12 @@ export const getMealDetail = async (id: string) => {
 
 export const getMealReviews = async (id: string) => {
   try {
-    return await apiFetch<TApiResponse<{ meal: Pick<TMeal, "id" | "title">; reviews: TReview[] }>>(
+    const result = await apiFetch<TApiResponse<{ meal: Pick<TMeal, "id" | "title">; reviews: TReview[] }>>(
       `/api/v1/meals/${id}/reviews`,
       { cache: "no-store" },
     );
+
+    return withFallbackData(result, { meal: { id, title: "" }, reviews: [] }, "Unable to load reviews");
   } catch (error) {
     return {
       success: false,
@@ -111,7 +120,7 @@ export const getMealReviews = async (id: string) => {
 
 export const addMealToMenu = async (payload: Record<string, unknown>) => {
   try {
-    const result = await apiFetch<TApiResponse<TMeal>>("/api/v1/meals/provider", {
+    const result = await apiFetch<TApiResponse<TMeal | null>>("/api/v1/meals/provider", {
       method: "POST",
       auth: true,
       body: JSON.stringify(payload),
@@ -120,7 +129,7 @@ export const addMealToMenu = async (payload: Record<string, unknown>) => {
     revalidatePath("/dashboard/menu");
     revalidatePath("/meals");
 
-    return result;
+    return withFallbackData(result, null, "Unable to add meal");
   } catch (error) {
     return {
       success: false,
@@ -133,7 +142,7 @@ export const addMealToMenu = async (payload: Record<string, unknown>) => {
 
 export const updateMeal = async (id: string, payload: Record<string, unknown>) => {
   try {
-    const result = await apiFetch<TApiResponse<TMeal>>(
+    const result = await apiFetch<TApiResponse<TMeal | null>>(
       `/api/v1/meals/provider/${id}`,
       {
         method: "PUT",
@@ -145,7 +154,7 @@ export const updateMeal = async (id: string, payload: Record<string, unknown>) =
     revalidatePath("/dashboard/menu");
     revalidatePath(`/meals/${id}`);
 
-    return result;
+    return withFallbackData(result, null, "Unable to update meal");
   } catch (error) {
     return {
       success: false,
@@ -158,7 +167,7 @@ export const updateMeal = async (id: string, payload: Record<string, unknown>) =
 
 export const deleteMeal = async (id: string) => {
   try {
-    const result = await apiFetch<TApiResponse<TMeal>>(
+    const result = await apiFetch<TApiResponse<TMeal | null>>(
       `/api/v1/meals/provider/${id}`,
       {
         method: "DELETE",
@@ -169,7 +178,7 @@ export const deleteMeal = async (id: string) => {
     revalidatePath("/dashboard/menu");
     revalidatePath("/meals");
 
-    return result;
+    return withFallbackData(result, null, "Unable to delete meal");
   } catch (error) {
     return {
       success: false,
@@ -185,7 +194,7 @@ export const addMealReview = async (
   payload: { rating: number; comment: string },
 ) => {
   try {
-    const result = await apiFetch<TApiResponse<TReview>>(
+    const result = await apiFetch<TApiResponse<TReview | null>>(
       `/api/v1/meals/${id}/reviews`,
       {
         method: "POST",
@@ -197,7 +206,7 @@ export const addMealReview = async (
     revalidatePath(`/meals/${id}`);
     revalidatePath("/dashboard/orders");
 
-    return result;
+    return withFallbackData(result, null, "Unable to submit review");
   } catch (error) {
     return {
       success: false,

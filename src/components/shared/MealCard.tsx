@@ -36,6 +36,8 @@ export default function MealCard({
     tags,
     prepTime,
   } = meal;
+  const mealTitle = title || "Meal";
+  const mealImage = image || "/images/hero-food.jpg";
 
 
   useEffect(() => {
@@ -70,8 +72,8 @@ export default function MealCard({
     <Card className="relative mx-auto w-full max-w-lg pt-0">
       <div className="relative h-60">
         <Image
-          src={image}
-          alt={title}
+          src={mealImage}
+          alt={mealTitle}
           fill
           className="relative z-20 w-full rounded-t-xl object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -87,7 +89,7 @@ export default function MealCard({
           {category?.name || "Meal"}
         </p>
         <CardTitle className="font-display text-[19px] font-bold tracking-tight text-fh-green-deep">
-          {title.length > 24 ? `${title.slice(0, 24)}...` : title}
+          {mealTitle.length > 24 ? `${mealTitle.slice(0, 24)}...` : mealTitle}
         </CardTitle>
         <CardDescription>
           <div className="flex items-center gap-2">
@@ -114,7 +116,7 @@ export default function MealCard({
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1 text-sm font-semibold text-fh-green-muted">
             <Clock3 className="h-3.5 w-3.5" />
-            {prepTime}m
+            {prepTime || 20}m
           </span>
           <button
             onClick={(event) => {

@@ -5,11 +5,18 @@ import MealCard from '@/components/shared/MealCard';
 import { PaginationControls } from '@/components/shared/PaginationControls';
 import { Spinner } from '@/components/ui/spinner';
 import { getAllMeals } from '@/services/meals';
-import { TMeal } from '@/types';
+import { TMeal, TPagination } from '@/types';
 import Link from 'next/link';
 import React, { Suspense } from "react";
 
 type TSearchParams = Promise<{ [key: string]: string | undefined }>;
+
+const emptyPagination: TPagination = {
+  total: 0,
+  page: 1,
+  limit: 9,
+  totalPage: 0,
+};
 
 export default async function MealsPage({searchParams}: {searchParams: TSearchParams}) {
   const query = await searchParams;
@@ -22,8 +29,8 @@ export default async function MealsPage({searchParams}: {searchParams: TSearchPa
     sortOrder: query.sortOrder,
     category: query.category
   });
-  const { meals } = data;
-  const { pagination } = data;
+  const meals = data?.meals || [];
+  const pagination = data?.pagination || emptyPagination;
 
   const badgeColors = [
     "bg-blue-100 text-blue-700",
@@ -58,12 +65,12 @@ export default async function MealsPage({searchParams}: {searchParams: TSearchPa
           <PriceRange />
         </div>
         <Suspense key={JSON.stringify(query)} fallback={<div className="flex items-center justify-center h-125"><Spinner className="size-8"/></div>}>
-        {meals.length === 0 ? (
+        {meals?.length === 0 ? (
           <p className='text-center'>No items found</p>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {meals?.map((meal: TMeal, index: number) => {
+              {meals.map((meal: TMeal, index: number) => {
                 const randomColor = badgeColors[index % badgeColors.length];
                 return (
                   <Link href={`/meals/${meal.id}`} key={meal.id}>

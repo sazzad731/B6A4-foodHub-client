@@ -3,11 +3,17 @@
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/services/auth";
 import { apiFetch } from "@/services/api";
+import { withFallbackData } from "@/services/response";
 import { TApiResponse, TProvider, TPagination } from "@/types";
 
 type ProviderListPayload = {
   providers: TProvider[];
   pagination: TPagination;
+};
+
+const emptyProviders: ProviderListPayload = {
+  providers: [],
+  pagination: { total: 0, page: 1, limit: 9, totalPage: 0 },
 };
 
 type ProviderParams = {
@@ -34,18 +40,17 @@ export const getAllProviders = async (params?: ProviderParams) => {
   try {
     const query = buildQuery(params);
 
-    return await apiFetch<TApiResponse<ProviderListPayload>>(
+    const result = await apiFetch<TApiResponse<ProviderListPayload>>(
       `/api/v1/providers${query ? `?${query}` : ""}`,
       { cache: "no-store" },
     );
+
+    return withFallbackData(result, emptyProviders, "Unable to load restaurants");
   } catch (error) {
     return {
       success: false,
       message: "Unable to load restaurants",
-      data: {
-        providers: [],
-        pagination: { total: 0, page: 1, limit: 9, totalPage: 0 },
-      },
+      data: emptyProviders,
       error,
     };
   }
@@ -53,9 +58,11 @@ export const getAllProviders = async (params?: ProviderParams) => {
 
 export const getProviderById = async (id: string) => {
   try {
-    return await apiFetch<TApiResponse<TProvider>>(`/api/v1/providers/${id}`, {
+    const result = await apiFetch<TApiResponse<TProvider | null>>(`/api/v1/providers/${id}`, {
       cache: "no-store",
     });
+
+    return withFallbackData(result, null, "Unable to load restaurant");
   } catch (error) {
     return {
       success: false,
@@ -85,7 +92,7 @@ export const createOrUpdateProviderProfile = async (
   payload: Record<string, unknown>,
 ) => {
   try {
-    const result = await apiFetch<TApiResponse<TProvider>>("/api/v1/providers", {
+    const result = await apiFetch<TApiResponse<TProvider | null>>("/api/v1/providers", {
       method: "POST",
       auth: true,
       body: JSON.stringify(payload),
@@ -94,7 +101,7 @@ export const createOrUpdateProviderProfile = async (
     revalidatePath("/dashboard/profile");
     revalidatePath("/providers");
 
-    return result;
+    return withFallbackData(result, null, "Unable to save provider profile");
   } catch (error) {
     return {
       success: false,

@@ -2,14 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { apiFetch } from "@/services/api";
+import { withFallbackData } from "@/services/response";
 import { TApiResponse, TOrder, TOrderStatus } from "@/types";
 
 export const getOrders = async () => {
   try {
-    return await apiFetch<TApiResponse<TOrder[]>>("/api/v1/orders", {
+    const result = await apiFetch<TApiResponse<TOrder[]>>("/api/v1/orders", {
       auth: true,
       cache: "no-store",
     });
+
+    return withFallbackData(result, [], "Unable to load orders");
   } catch (error) {
     return {
       success: false,
@@ -22,10 +25,12 @@ export const getOrders = async () => {
 
 export const getOrderDetails = async (id: string) => {
   try {
-    return await apiFetch<TApiResponse<TOrder>>(`/api/v1/orders/${id}`, {
+    const result = await apiFetch<TApiResponse<TOrder | null>>(`/api/v1/orders/${id}`, {
       auth: true,
       cache: "no-store",
     });
+
+    return withFallbackData(result, null, "Unable to load order");
   } catch (error) {
     return {
       success: false,
@@ -43,7 +48,7 @@ export const createOrder = async (payload: {
   items: { mealId: string; quantity: number }[];
 }) => {
   try {
-    const result = await apiFetch<TApiResponse<TOrder>>("/api/v1/orders", {
+    const result = await apiFetch<TApiResponse<TOrder | null>>("/api/v1/orders", {
       method: "POST",
       auth: true,
       body: JSON.stringify(payload),
@@ -51,7 +56,7 @@ export const createOrder = async (payload: {
 
     revalidatePath("/dashboard/orders");
 
-    return result;
+    return withFallbackData(result, null, "Unable to place order");
   } catch (error) {
     return {
       success: false,
@@ -64,7 +69,7 @@ export const createOrder = async (payload: {
 
 export const updateOrderStatus = async (id: string, status: TOrderStatus) => {
   try {
-    const result = await apiFetch<TApiResponse<TOrder>>(
+    const result = await apiFetch<TApiResponse<TOrder | null>>(
       `/api/v1/orders/provider/${id}`,
       {
         method: "PATCH",
@@ -75,7 +80,7 @@ export const updateOrderStatus = async (id: string, status: TOrderStatus) => {
 
     revalidatePath("/dashboard/orders");
 
-    return result;
+    return withFallbackData(result, null, "Unable to update order");
   } catch (error) {
     return {
       success: false,

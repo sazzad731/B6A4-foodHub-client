@@ -19,7 +19,7 @@ export default function Categories() {
     const allCategories = async () => {
       try {
         const categoryData = await getAllCategory();
-        setCategories(categoryData.data);
+        setCategories(categoryData.data || []);
       } catch (error: unknown) {
         toast.error(
           error instanceof Error ? error.message : "Unable to load categories",
@@ -53,7 +53,7 @@ export default function Categories() {
           </Link>
         </div>
         <div className="scrollbar-hide flex gap-3.5 overflow-x-auto py-2">
-          {categories.map((item) => (
+          {categories?.map((item) => (
             <button
               key={item.id}
               onClick={() => navigateToPage("category", item.id)}
