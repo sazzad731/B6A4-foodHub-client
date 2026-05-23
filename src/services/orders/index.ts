@@ -67,6 +67,30 @@ export const createOrder = async (payload: {
   }
 };
 
+export const cancelOrder = async (id: string) => {
+  try {
+    const result = await apiFetch<TApiResponse<TOrder | null>>(
+      `/api/v1/orders/${id}/cancel`,
+      {
+        method: "PATCH",
+        auth: true,
+      },
+    );
+
+    revalidatePath("/dashboard/orders");
+    revalidatePath(`/dashboard/orders/${id}`);
+
+    return withFallbackData(result, null, "Unable to cancel order");
+  } catch (error) {
+    return {
+      success: false,
+      message: "Unable to cancel order",
+      data: null,
+      error,
+    };
+  }
+};
+
 export const updateOrderStatus = async (id: string, status: TOrderStatus) => {
   try {
     const result = await apiFetch<TApiResponse<TOrder | null>>(

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { addMealReview } from "@/services/meals";
-import { updateOrderStatus } from "@/services/orders";
+import { cancelOrder } from "@/services/orders";
 import { TOrder } from "@/types";
 
 export default function OrderDetailClient({
@@ -16,12 +17,16 @@ export default function OrderDetailClient({
   order: TOrder;
   onCancel?: () => void;
 }) {
+  const router = useRouter();
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [mealId, setMealId] = useState(order.items[0]?.mealId || "");
+  const [cancelling, setCancelling] = useState(false);
 
   const cancel = async () => {
-    const result = await updateOrderStatus(order.id, "CANCELLED");
+    setCancelling(true);
+    const result = await cancelOrder(order.id);
+    setCancelling(false);
 
     if (!result.success) {
       toast.error(result.message || "Unable to cancel order.");
@@ -30,6 +35,7 @@ export default function OrderDetailClient({
 
     toast.success("Order cancelled.");
     onCancel?.();
+    router.refresh();
   };
 
   const submitReview = async () => {
@@ -53,8 +59,9 @@ export default function OrderDetailClient({
           variant="outline"
           className="w-full border-red-300 text-red-600 hover:bg-red-50"
           onClick={cancel}
+          disabled={cancelling}
         >
-          Cancel Order
+          {cancelling ? "Cancelling..." : "Cancel Order"}
         </Button>
       )}
 

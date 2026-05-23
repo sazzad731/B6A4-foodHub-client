@@ -16,7 +16,7 @@ import DashboardHeader from "@/components/modules/dashboard/DashboardHeader";
 import StatCard from "@/components/modules/dashboard/StatCard";
 import OrderStatusBadge from "@/components/modules/dashboard/OrderStatusBadge";
 import { formatCurrency, formatDate } from "@/lib/format";
-import { updateOrderStatus } from "@/services/orders";
+import { cancelOrder as cancelCustomerOrder } from "@/services/orders";
 import { TOrder } from "@/types";
 
 export default function CustomerOrdersClient({
@@ -41,7 +41,7 @@ export default function CustomerOrdersClient({
   );
 
   const cancelOrder = async (id: string) => {
-    const result = await updateOrderStatus(id, "CANCELLED");
+    const result = await cancelCustomerOrder(id);
 
     if (!result.success || !result.data) {
       toast.error(result.message || "Unable to cancel order.");
